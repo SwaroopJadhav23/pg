@@ -28,9 +28,14 @@ npm run dev
 
 ## Demo Logins
 
-- Student: `student@pg.test` / `Password@123`
-- Admin: `admin@pg.test` / `Password@123`
-- Super Admin: `owner@pg.test` / `Password@123`
+See [docs/login-credentials.md](docs/login-credentials.md) for all localhost login credentials and dashboard links.
+
+| Role | Email (ID) | Password | Main Dashboard Link |
+|------|------------|----------|---------------------|
+| Student | `student@pg.test` | `Password@123` | http://localhost:5173/student |
+| Admin | `admin@pg.test` | `Password@123` | http://localhost:5173/admin |
+| Super Admin | `owner@pg.test` | `Password@123` | http://localhost:5173/super-admin |
+| Admin (Mumbai) | `mumbai.admin@pg.test` | `Password@123` | http://localhost:5173/admin |
 
 ## API Groups
 
