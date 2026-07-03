@@ -1,0 +1,123 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --primary: 250 100% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 20% 96%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 240 20% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 244 100% 97%;
+    --accent-foreground: 250 100% 55%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 250 100% 65%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 224 71% 4%;
+    --foreground: 213 31% 91%;
+    --card: 224 71% 6%;
+    --card-foreground: 213 31% 91%;
+    --primary: 250 100% 70%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 223 47% 11%;
+    --secondary-foreground: 213 31% 91%;
+    --muted: 223 47% 11%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 223 47% 14%;
+    --accent-foreground: 250 100% 78%;
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+    --ring: 250 100% 70%;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background: rgb(248 250 252);
+    color: hsl(var(--foreground));
+    font-family: Inter, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .dark body {
+    background: hsl(var(--background));
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: hsl(var(--background));
+    accent-color: hsl(var(--primary));
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active,
+  textarea:-webkit-autofill,
+  textarea:-webkit-autofill:hover,
+  textarea:-webkit-autofill:focus,
+  select:-webkit-autofill,
+  select:-webkit-autofill:hover,
+  select:-webkit-autofill:focus {
+    background-color: hsl(var(--background)) !important;
+    background-image: none !important;
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    caret-color: hsl(var(--foreground)) !important;
+    -webkit-box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+    box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+    transition: background-color 999999s ease-in-out 0s, color 999999s ease-in-out 0s;
+  }
+
+  .dark input:-webkit-autofill,
+  .dark input:-webkit-autofill:hover,
+  .dark input:-webkit-autofill:focus,
+  .dark input:-webkit-autofill:active,
+  .dark textarea:-webkit-autofill,
+  .dark textarea:-webkit-autofill:hover,
+  .dark textarea:-webkit-autofill:focus,
+  .dark select:-webkit-autofill,
+  .dark select:-webkit-autofill:hover,
+  .dark select:-webkit-autofill:focus {
+    background-color: hsl(var(--background)) !important;
+    -webkit-text-fill-color: hsl(var(--foreground)) !important;
+    -webkit-box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+    box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+  }
+}
+
+.no-yellow-autofill,
+.no-yellow-autofill:-webkit-autofill,
+.no-yellow-autofill:-webkit-autofill:hover,
+.no-yellow-autofill:-webkit-autofill:focus,
+.no-yellow-autofill:-webkit-autofill:active {
+  background-color: hsl(var(--background)) !important;
+  background-image: none !important;
+  -webkit-text-fill-color: hsl(var(--foreground)) !important;
+  caret-color: hsl(var(--foreground)) !important;
+  -webkit-box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+  box-shadow: 0 0 0 1000px hsl(var(--background)) inset !important;
+}
+
+.gradient-panel {
+  background: radial-gradient(circle at top left, rgba(108, 77, 255, 0.18), transparent 34%), linear-gradient(135deg, #ffffff 0%, #f8f7ff 100%);
+}
+
+.dark .gradient-panel {
+  background: radial-gradient(circle at top left, rgba(139, 120, 255, 0.2), transparent 34%), linear-gradient(135deg, #111827 0%, #0f1020 100%);
+}

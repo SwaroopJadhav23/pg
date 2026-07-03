@@ -1,0 +1,99 @@
+Build a world-class Courier Management System Super Admin Dashboard using React + Vite + Tailwind CSS.
+
+Design Requirements:
+
+- Premium enterprise SaaS design
+- White background
+- Modern glassmorphism cards
+- Professional courier/logistics theme
+- Fully responsive for desktop, tablet and mobile
+- Sticky top navbar
+- Collapsible sidebar
+- Smooth animations
+- Dark mode support
+- Notification center
+- Search everywhere functionality
+
+Color Palette:
+Primary: #2563EB
+Secondary: #0F172A
+Success: #10B981
+Warning: #F59E0B
+Danger: #EF4444
+Background: #F8FAFC
+
+Sidebar Menu:
+
+Dashboard
+Branch Management
+Employee Management
+Shipment Management
+Customer Management
+Billing & Accounting
+COD Settlement
+Franchise Management
+Reports & Analytics
+Notifications
+Audit Logs
+Settings
+
+Dashboard KPIs:
+
+Total Shipments
+Delivered Shipments
+Pending Shipments
+Returned Shipments
+Revenue
+COD Collection
+Active Branches
+Active Employees
+Active Customers
+
+Dashboard Widgets:
+
+Revenue Chart
+Shipment Trend Chart
+Branch Performance Chart
+Delivery Success Rate
+Top Performing Branches
+Recent Shipments
+Recent Activities
+
+Analytics Section:
+
+Daily Revenue
+Weekly Revenue
+Monthly Revenue
+Yearly Revenue
+
+Shipment Status Breakdown:
+
+Booked
+Received
+Dispatched
+In Transit
+Out For Delivery
+Delivered
+Returned
+
+Recent Activity Feed:
+
+New Shipment Created
+Branch Added
+Employee Added
+Delivery Completed
+COD Settled
+
+UI Requirements:
+
+Animated statistic cards
+Interactive charts
+Table with filters
+Export to Excel
+Export to PDF
+Pagination
+Advanced search
+Date filters
+Responsive cards
+
+Generate production-level UI.

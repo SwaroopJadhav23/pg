@@ -1,0 +1,204 @@
+Create a Professional PG Admin Dashboard.
+
+Role:
+Property Manager / Caretaker.
+
+This dashboard manages a single PG property.
+
+Design Style:
+- Enterprise Grade Dashboard
+- White Background
+- Purple Theme
+- Modern Cards
+- Responsive for Desktop, Tablet and Mobile
+- Premium UI Components
+
+Sidebar Menu:
+1. Dashboard
+2. Tenants
+3. Rooms
+4. Rent Management
+5. Expenses
+6. Complaints
+7. Visitors
+8. Staff
+9. Notices
+10. Reports
+11. Settings
+
+Dashboard Overview:
+
+Statistics Cards:
+- Total Tenants
+- Occupied Beds
+- Vacant Beds
+- Monthly Revenue
+- Pending Rent
+- Open Complaints
+- Total Visitors
+- Staff Count
+
+Charts:
+- Monthly Revenue Chart
+- Occupancy Chart
+- Rent Collection Trend
+- Expense Breakdown
+
+Tenant Management:
+
+Features:
+- Add Tenant
+- Edit Tenant
+- Delete Tenant
+- View Profile
+
+Store:
+- Personal Details
+- Guardian Details
+- Emergency Contact
+- Aadhaar
+- PAN
+- Agreement Documents
+
+Tenant Table:
+Search
+Filter
+Pagination
+
+Room Management:
+
+Hierarchy:
+Property
+→ Floor
+→ Room
+→ Bed
+
+Features:
+- Create Floor
+- Create Room
+- Create Bed
+- Assign Tenant
+- Transfer Tenant
+- Vacate Bed
+
+Room Status:
+- Occupied
+- Vacant
+- Reserved
+- Maintenance
+
+Rent Management:
+
+Rent Dashboard:
+- Total Collection
+- Pending Collection
+- Overdue Rent
+
+Rent Records:
+- Generate Rent
+- Mark Paid
+- Generate Receipt
+- Send Reminder
+
+Payment Methods:
+- Cash
+- UPI
+- Bank Transfer
+
+Expense Management:
+
+Expense Categories:
+- Electricity
+- Water
+- Internet
+- Maintenance
+- Staff Salary
+- Food
+- Miscellaneous
+
+Features:
+- Add Expense
+- Upload Bill
+- Approve Expense
+- Expense Reports
+
+Complaint Management:
+
+Complaint Dashboard:
+- Open
+- Assigned
+- In Progress
+- Resolved
+
+Assign Complaint to:
+- Electrician
+- Plumber
+- Cleaner
+- Staff
+
+Complaint Timeline Tracking
+
+Visitor Management:
+
+Visitor Entry:
+- Visitor Name
+- Mobile Number
+- Tenant Name
+- Check-In
+- Check-Out
+
+Generate Visitor Pass
+
+Staff Management:
+
+Manage:
+- Caretaker
+- Security
+- Cleaner
+- Cook
+
+Features:
+- Attendance
+- Salary
+- Task Assignment
+
+Notice Management:
+
+Create Notice
+Schedule Notice
+Send to:
+- All Tenants
+- Specific Floors
+- Specific Rooms
+
+Reports Module:
+
+Generate:
+- Occupancy Report
+- Revenue Report
+- Rent Collection Report
+- Expense Report
+- Tenant Report
+
+Export:
+PDF
+Excel
+
+Settings:
+
+Property Settings
+Rent Settings
+Notification Settings
+WhatsApp Integration
+Email Integration
+
+Additional Features:
+
+Role Permissions
+Activity Logs
+Realtime Notifications
+Advanced Search
+Bulk Actions
+Audit Logs
+Dark Mode
+Responsive Design

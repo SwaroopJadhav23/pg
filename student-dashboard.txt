@@ -1,0 +1,163 @@
+Create a modern premium Tenant Dashboard (Student Dashboard) for a PG Management System.
+
+Role:
+Tenant / Student living in the PG.
+
+Design Theme:
+- Modern SaaS Dashboard
+- White background
+- Purple (#6C4DFF) primary color
+- Soft gray cards
+- Glassmorphism elements
+- Mobile First Responsive Design
+- Premium animations
+- Clean typography using Inter font
+- Beautiful card-based UI
+
+Sidebar Menu:
+1. Dashboard
+2. My Room
+3. Rent & Payments
+4. Complaints
+5. Notices
+6. Documents
+7. Visitors
+8. Profile
+9. Support
+10. Logout
+
+Dashboard Overview:
+
+Create a welcome section showing:
+- Student Name
+- Room Number
+- Bed Number
+- Property Name
+- Joining Date
+
+Statistics Cards:
+- Current Rent Status
+- Pending Amount
+- Next Due Date
+- Active Complaints
+- Visitors This Month
+- Notices Received
+
+Room Information Module:
+Display:
+- Property Name
+- Floor Number
+- Room Number
+- Bed Number
+- Room Type
+- Sharing Details
+- Amenities Available
+
+Rent Management Module:
+
+Show:
+- Current Month Rent
+- Due Date
+- Payment Status
+- Late Fees (if any)
+
+Payment History Table:
+Columns:
+- Month
+- Amount
+- Payment Date
+- Status
+- Receipt Download
+
+Features:
+- Download Receipt PDF
+- View Payment History
+- Payment Reminders
+
+Complaint Module:
+
+Raise New Complaint Form:
+- Category
+- Priority
+- Description
+- Upload Photo
+
+Complaint Tracking:
+Status:
+- Open
+- Assigned
+- In Progress
+- Resolved
+
+Timeline View:
+Show complaint updates visually.
+
+Notices Module:
+
+Display:
+- Latest Announcements
+- Maintenance Notices
+- Emergency Alerts
+- Rent Reminders
+
+Use notification cards with icons.
+
+Documents Module:
+
+Available Documents:
+- Rent Agreement
+- Aadhaar Copy
+- PAN Copy
+- Payment Receipts
+- Other Uploaded Documents
+
+Features:
+- Download
+- Preview
+- Share
+
+Visitor Management:
+
+Visitor Entry Requests:
+- Visitor Name
+- Mobile Number
+- Relation
+- Visit Date
+- Expected Time
+
+Visitor History:
+- Check In
+- Check Out
+- Status
+
+Profile Module:
+
+Personal Information:
+- Photo
+- Name
+- Email
+- Mobile
+- Address
+
+Emergency Contact:
+- Guardian Name
+- Contact Number
+
+Editable Profile Settings
+
+Support Module:
+
+Raise Support Ticket
+Chat with Caretaker
+WhatsApp Support Button
+
+Additional Features:
+
+Notification Center
+Dark Mode Toggle
+Mobile Responsive
+Realtime Updates
+Beautiful Charts
+Framer Motion Animations
+Loading Skeletons
+Toast Notifications

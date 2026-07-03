@@ -1,0 +1,182 @@
+Create an Enterprise Multi-PG Super Admin Dashboard.
+
+Role:
+PG Owner managing multiple PG properties.
+
+This is the master dashboard controlling all PG branches.
+
+Design Style:
+- Premium Enterprise SaaS
+- White Background
+- Purple and Indigo Theme
+- Beautiful Analytics
+- Modern Data Visualization
+- Responsive Layout
+
+Sidebar Menu:
+1. Global Dashboard
+2. Properties
+3. Revenue Center
+4. Tenants
+5. Complaints
+6. Notices
+7. Managers
+8. Analytics
+9. Audit Logs
+10. Settings
+
+Global Dashboard:
+
+Top Statistics:
+- Total Properties
+- Total Rooms
+- Total Beds
+- Occupied Beds
+- Active Tenants
+- Monthly Revenue
+- Pending Rent
+- Open Complaints
+
+Executive Analytics:
+
+Charts:
+- Revenue by Property
+- Occupancy by Property
+- Monthly Growth
+- Property Performance
+- Complaint Analytics
+
+Properties Management:
+
+Property Listing Cards:
+Display:
+- Property Image
+- Property Name
+- City
+- Occupancy Rate
+- Monthly Revenue
+- Available Beds
+
+Actions:
+- View Property
+- Edit Property
+- Disable Property
+- Open Admin Dashboard
+
+Create New Property:
+
+Fields:
+- Property Name
+- Address
+- Location
+- Capacity
+- Floors
+- Rooms
+- Amenities
+- Pricing
+
+Manager Administration:
+
+Manage Property Managers
+
+Features:
+- Create Manager
+- Assign Property
+- Edit Access
+- Disable Account
+
+Tenant Monitoring:
+
+Global Tenant Database
+
+Features:
+- Search Tenant
+- View Property
+- View Rent Status
+- Tenant History
+- Active / Inactive Status
+
+Revenue Center:
+
+Financial Overview:
+
+Metrics:
+- Total Revenue
+- Collection Rate
+- Outstanding Amount
+- Profit Estimate
+
+Property-wise Revenue Comparison
+
+Complaints Monitoring:
+
+Monitor all complaints across all properties.
+
+Filters:
+- Property
+- Priority
+- Status
+
+Notice Center:
+
+Send Notice:
+- All Properties
+- Selected Properties
+- Managers
+- Tenants
+
+Schedule Future Notices
+
+Analytics Module:
+
+Advanced Reports:
+- Occupancy Trends
+- Revenue Trends
+- Property Performance
+- Tenant Retention
+- Complaint Resolution Time
+
+Export:
+PDF
+Excel
+CSV
+
+Audit Logs:
+
+Track:
+- Login History
+- Manager Actions
+- Tenant Activities
+- Rent Updates
+- Property Modifications
+
+Settings:
+
+Platform Settings
+Subscription Settings
+Notification Settings
+Security Settings
+
+Enterprise Features:
+
+Multi Property Access Control
+Role Based Access
+Master Search
+Global Notifications
+Realtime Analytics
+AI Insights
+Predictive Occupancy Analysis
+Automated Revenue Forecasting
+Advanced KPI Dashboard
+
+UI Expectations:
+
+- Similar quality to Zoho, Razorpay, Airbnb Admin, Notion and Hubspot
+- Professional SaaS Feel
+- Fully Responsive
+- Smooth Animations
+- Interactive Charts
+- Beautiful Data Tables
+- Modern Empty States
+- Elegant Forms
+- Premium User Experience
