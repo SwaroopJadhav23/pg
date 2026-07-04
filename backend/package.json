@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "seed": "node src/utils/seedDemoData.js"
+    "seed": "node src/utils/seedDemoData.js",
+    "clear-demo": "node src/utils/clearSeedData.js"
   },
   "dependencies": {
     "bcryptjs": "latest",
@@ -18,6 +19,7 @@
     "jsonwebtoken": "latest",
     "mongoose": "latest",
     "morgan": "latest",
+    "multer": "^2.2.0",
     "zod": "latest"
   },
   "devDependencies": {

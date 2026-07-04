@@ -13,9 +13,15 @@ export function validate(schema) {
       return next(new AppError(message || 'Validation failed', 422));
     }
 
-    req.body = result.data.body ?? req.body;
-    req.params = result.data.params ?? req.params;
-    req.query = result.data.query ?? req.query;
+    if (result.data.body !== undefined) {
+      req.body = result.data.body;
+    }
+    if (result.data.params !== undefined) {
+      Object.assign(req.params, result.data.params);
+    }
+    if (result.data.query !== undefined) {
+      Object.assign(req.query, result.data.query);
+    }
     next();
   };
 }

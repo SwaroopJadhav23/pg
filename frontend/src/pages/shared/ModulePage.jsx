@@ -4,7 +4,6 @@ import { DataTable } from '../../components/shared/DataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { complaintRows, tableRows } from '../../data/mockData';
 
 const copy = {
   'my-room': ['My Room', 'Property, floor, room, bed, sharing details and amenities.'],
@@ -31,7 +30,7 @@ const copy = {
 
 export function ModulePage({ module }) {
   const [title, description] = copy[module] || ['Module', 'Enterprise workflow module.'];
-  const rows = module === 'complaints' ? complaintRows : tableRows;
+  const rows = [];
   const columns = module === 'complaints'
     ? [{ key: 'ticket', label: 'Ticket' }, { key: 'category', label: 'Category' }, { key: 'owner', label: 'Owner' }, { key: 'status', label: 'Status', badge: true }]
     : [{ key: 'name', label: 'Name' }, { key: 'room', label: 'Reference' }, { key: 'amount', label: 'Value' }, { key: 'status', label: 'Status', badge: true }];

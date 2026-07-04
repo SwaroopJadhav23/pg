@@ -6,12 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { Input } from '../../components/ui/input';
 import { useStudentResource } from '../../hooks/useStudentResource';
 import { studentService } from '../../services/studentService';
-import { studentFallback } from './studentPortalData';
 import { InfoTile, formatDate } from './studentUi';
 
 export function ProfilePage() {
-  const { data, setData } = useStudentResource(studentService.profile, { student: studentFallback.student });
-  const student = data.student || studentFallback.student;
+  const { data, setData } = useStudentResource(studentService.profile, { student: null });
+  const student = data.student || {};
   const profile = student.profile || {};
   const [form, setForm] = useState({});
   const [message, setMessage] = useState('');
@@ -36,7 +35,7 @@ export function ProfilePage() {
       setData({ student: payload.student });
       setMessage('Profile updated successfully.');
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Profile changes are ready. Connect backend to persist them.');
+      setMessage(error.response?.data?.message || 'Could not update profile.');
     }
   }
 
@@ -46,11 +45,11 @@ export function ProfilePage() {
       <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
         <Card>
           <CardContent className="p-6 text-center">
-            <img src={profile.photoUrl || 'https://api.dicebear.com/8.x/initials/svg?seed=Student'} alt={student.name} className="mx-auto h-28 w-28 rounded-3xl border bg-slate-100" />
+            <img src={profile.photoUrl || undefined} alt={student.name} className="mx-auto h-28 w-28 rounded-3xl border bg-slate-100 object-cover" />
             <h2 className="mt-4 text-2xl font-extrabold">{student.name}</h2>
             <p className="text-sm text-muted-foreground">{student.email}</p>
             <div className="mt-6 grid gap-3 text-left">
-              <InfoTile label="Room" value={`${profile.roomNumber || 'A-204'} / ${profile.bedNumber || 'B2'}`} />
+              <InfoTile label="Room" value={`${profile.roomNumber || '-'} / ${profile.bedNumber || '-'}`} />
               <InfoTile label="Joining Date" value={formatDate(profile.joiningDate)} />
               <InfoTile label="Room Type" value={profile.roomType} />
             </div>

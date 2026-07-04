@@ -16,6 +16,7 @@ export const createTenantSchema = z.object({
       emergencyContact: optionalText,
       aadhaar: optionalText,
       pan: optionalText,
+      photoUrl: optionalText,
       roomNumber: optionalText,
       bedNumber: optionalText,
       joiningDate: optionalText

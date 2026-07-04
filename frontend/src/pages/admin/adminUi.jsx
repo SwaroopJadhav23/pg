@@ -14,7 +14,7 @@ export function formatDate(value) {
   return new Intl.DateTimeFormat('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value));
 }
 
-export function AdminModuleHeader({ title, description, actionLabel }) {
+export function AdminModuleHeader({ title, description, actionLabel, onAction }) {
   return (
     <div className="gradient-panel rounded-[2rem] border p-6 shadow-soft">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -23,7 +23,7 @@ export function AdminModuleHeader({ title, description, actionLabel }) {
           <h1 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">{title}</h1>
           <p className="mt-2 max-w-3xl text-muted-foreground">{description}</p>
         </div>
-        {actionLabel ? <Button>{actionLabel}</Button> : null}
+        {actionLabel ? <Button type="button" onClick={onAction}>{actionLabel}</Button> : null}
       </div>
     </div>
   );

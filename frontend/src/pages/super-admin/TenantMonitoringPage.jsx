@@ -2,11 +2,10 @@ import { DataTable } from '../../components/shared/DataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { useResource } from '../../hooks/useResource';
 import { superAdminService } from '../../services/superAdminService';
-import { superFallback } from './superAdminData';
 import { SuperHeader, superStatusVariant } from './superAdminUi';
 
 export function TenantMonitoringPage() {
-  const { data } = useResource(superAdminService.tenants, { tenants: superFallback.tenants, rentStatus: [] });
+  const { data } = useResource(superAdminService.tenants, { tenants: [], rentStatus: [] });
   const rows = (data.tenants || []).map((tenant) => ({
     id: tenant._id,
     name: tenant.name,

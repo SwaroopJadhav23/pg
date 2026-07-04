@@ -8,13 +8,12 @@ import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { useStudentResource } from '../../hooks/useStudentResource';
 import { studentService } from '../../services/studentService';
-import { supportFallback } from './studentPortalData';
 import { formatDate, statusVariant } from './studentUi';
 
 const initialForm = { subject: '', category: 'general', message: '', channel: 'portal' };
 
 export function SupportPage() {
-  const { data, setData } = useStudentResource(studentService.support, supportFallback);
+  const { data, setData } = useStudentResource(studentService.support, { tickets: [] });
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState('');
 
@@ -27,7 +26,7 @@ export function SupportPage() {
       setForm(initialForm);
       setMessage('Support ticket created.');
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Ticket ready. Connect backend to persist it.');
+      setMessage(error.response?.data?.message || 'Could not submit support ticket.');
     }
   }
 

@@ -52,7 +52,13 @@ export async function dashboard(req, res) {
 export async function createTenant(req, res) {
   const tenant = await User.create({ ...req.body, role: ROLES.STUDENT, property: req.user.property });
   await audit(req, 'tenant.created', 'User', tenant._id, { email: tenant.email });
-  created(res, { tenant }, 'Tenant created');
+  created(res, { tenant: await User.findById(tenant._id).select('-password') }, 'Tenant created');
+}
+
+export async function uploadTenantPhoto(req, res) {
+  if (!req.file) throw new AppError('Photo file is required', 400);
+  const photoUrl = `/upload/${req.file.filename}`;
+  success(res, { photoUrl }, 'Tenant photo uploaded');
 }
 
 export async function listTenants(req, res) {

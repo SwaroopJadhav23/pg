@@ -4,7 +4,6 @@ import { Badge } from '../../components/ui/badge';
 import { Card, CardContent } from '../../components/ui/card';
 import { useStudentResource } from '../../hooks/useStudentResource';
 import { studentService } from '../../services/studentService';
-import { noticesFallback } from './studentPortalData';
 import { formatDate } from './studentUi';
 
 function noticeIcon(title = '') {
@@ -16,7 +15,7 @@ function noticeIcon(title = '') {
 }
 
 export function NoticesPage() {
-  const { data } = useStudentResource(studentService.notices, noticesFallback);
+  const { data } = useStudentResource(studentService.notices, { notices: [] });
 
   return (
     <>

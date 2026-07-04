@@ -5,11 +5,10 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent } from '../../components/ui/card';
 import { useStudentResource } from '../../hooks/useStudentResource';
 import { studentService } from '../../services/studentService';
-import { documentsFallback } from './studentPortalData';
 import { formatBytes, formatDate } from './studentUi';
 
 export function DocumentsPage() {
-  const { data } = useStudentResource(studentService.documents, documentsFallback);
+  const { data } = useStudentResource(studentService.documents, { documents: [] });
 
   return (
     <>

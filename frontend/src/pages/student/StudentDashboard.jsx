@@ -6,24 +6,25 @@ import { StatCard } from '../../components/shared/StatCard';
 import { Badge } from '../../components/ui/badge';
 import { useStudentResource } from '../../hooks/useStudentResource';
 import { formatCurrency } from '../../lib/utils';
+import { emptyStudentDashboard } from '../../config/emptyStates';
 import { studentService } from '../../services/studentService';
-import { rentFallback, studentFallback } from './studentPortalData';
 import { formatDate, statusVariant } from './studentUi';
 
 export function StudentDashboard() {
   const { data } = useStudentResource(studentService.dashboard, {
-    ...studentFallback,
-    currentRent: rentFallback.currentRent,
-    rentHistory: rentFallback.history,
+    ...emptyStudentDashboard,
+    stats: {},
+    room: null,
+    property: null,
     activeComplaints: []
   });
 
   const profile = data.student?.profile || {};
-  const chartData = (data.rentHistory || rentFallback.history).slice().reverse().map((rent) => ({
+  const chartData = (data.rentHistory || []).slice().reverse().map((rent) => ({
     name: rent.month?.split(' ')[0] || 'Rent',
     value: rent.amount || 0
   }));
-  const rows = (data.rentHistory || rentFallback.history).slice(0, 4).map((rent) => ({
+  const rows = (data.rentHistory || []).slice(0, 4).map((rent) => ({
     id: rent._id || rent.month,
     month: rent.month,
     amount: formatCurrency(rent.amount || 0),

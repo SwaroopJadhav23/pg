@@ -2,23 +2,24 @@ import { useEffect, useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
+import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
+import { emptySettings } from '../../config/emptyStates';
 import { superAdminService } from '../../services/superAdminService';
-import { superFallback } from './superAdminData';
 import { SuperHeader } from './superAdminUi';
 
 export function SettingsPage() {
-  const { data, setData } = useResource(superAdminService.settings, { setting: superFallback.settings });
-  const setting = data.setting || superFallback.settings;
-  const [form, setForm] = useState(superFallback.settings);
+  const { data, setData } = useResource(superAdminService.settings, { setting: emptySettings });
+  const setting = data.setting || emptySettings;
+  const [form, setForm] = useState(emptySettings);
   const [message, setMessage] = useState('');
 
   useEffect(() => {
     setForm({
-      platform: setting.platform || superFallback.settings.platform,
-      subscription: setting.subscription || superFallback.settings.subscription,
-      notifications: setting.notifications || superFallback.settings.notifications,
-      security: setting.security || superFallback.settings.security
+      platform: setting.platform || emptySettings.platform,
+      subscription: setting.subscription || emptySettings.subscription,
+      notifications: setting.notifications || emptySettings.notifications,
+      security: setting.security || emptySettings.security
     });
   }, [setting.platform, setting.subscription, setting.notifications, setting.security]);
 
@@ -28,8 +29,10 @@ export function SettingsPage() {
       const payload = await superAdminService.updateSettings(form);
       setData({ setting: payload.setting });
       setMessage('Settings updated.');
+      emitToast({ title: 'Settings saved', description: 'Platform settings updated.' });
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Settings form ready. Connect backend to persist.');
+      setMessage(error.response?.data?.message || 'Could not save settings.');
+      emitToast({ title: 'Save failed', description: error.response?.data?.message || 'Could not save settings.', variant: 'destructive' });
     }
   }
 
@@ -52,7 +55,7 @@ export function SettingsPage() {
               <option value="yearly">yearly</option>
             </select>
             {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary md:col-span-2">{message}</p> : null}
-            <Button className="md:col-span-2">Save Settings</Button>
+            <Button type="submit" className="md:col-span-2">Save Settings</Button>
           </form>
         </CardContent>
       </Card>

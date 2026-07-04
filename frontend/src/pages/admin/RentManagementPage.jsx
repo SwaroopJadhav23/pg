@@ -4,17 +4,17 @@ import { StatCard } from '../../components/shared/StatCard';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
+import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { adminFallback } from './adminPortalData';
 import { AdminModuleHeader, adminStatusVariant, formatDate } from './adminUi';
 import { ReceiptIndianRupee, Send, WalletCards } from 'lucide-react';
 
 const initialForm = { tenantId: '', month: '', amount: '', dueDate: '', lateFees: 0 };
 
 export function RentManagementPage() {
-  const { data, setData } = useResource(adminService.rents, { rents: adminFallback.rents });
+  const { data, setData } = useResource(adminService.rents, { rents: [] });
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState('');
   const rents = data.rents || [];
@@ -25,11 +25,39 @@ export function RentManagementPage() {
   async function submit(event) {
     event.preventDefault();
     try {
-      const payload = await adminService.generateRent(form);
+      const payload = await adminService.generateRent({
+        ...form,
+        amount: Number(form.amount) || 0,
+        lateFees: Number(form.lateFees) || 0
+      });
       setData((current) => ({ rents: [payload.rent, ...(current.rents || [])] }));
+      setForm(initialForm);
       setMessage('Rent generated.');
+      emitToast({ title: 'Rent generated', description: payload.rent?.month || 'Rent record created.' });
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Use a real tenant ID after backend seed/login.');
+      setMessage(error.response?.data?.message || 'Could not generate rent.');
+      emitToast({ title: 'Generate failed', description: error.response?.data?.message || 'Could not generate rent.', variant: 'destructive' });
+    }
+  }
+
+  async function markPaid(rent) {
+    try {
+      const payload = await adminService.markRentPaid(rent._id, { method: 'cash' });
+      setData((current) => ({
+        rents: (current.rents || []).map((item) => (item._id === rent._id ? payload.rent : item))
+      }));
+      emitToast({ title: 'Rent marked paid', description: rent.tenant?.name || rent.month });
+    } catch (error) {
+      emitToast({ title: 'Update failed', description: error.response?.data?.message || 'Could not mark rent as paid.', variant: 'destructive' });
+    }
+  }
+
+  async function sendReminder(rent) {
+    try {
+      await adminService.sendRentReminder(rent._id);
+      emitToast({ title: 'Reminder sent', description: rent.tenant?.name || rent.month });
+    } catch (error) {
+      emitToast({ title: 'Reminder failed', description: error.response?.data?.message || 'Could not send reminder.', variant: 'destructive' });
     }
   }
 
@@ -41,34 +69,58 @@ export function RentManagementPage() {
     amount: formatCurrency(rent.amount || 0),
     dueDate: formatDate(rent.dueDate),
     status: rent.status,
-    variant: adminStatusVariant(rent.status)
+    variant: adminStatusVariant(rent.status),
+    actions: rent.status !== 'paid' ? (
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" variant="outline" size="sm" onClick={() => markPaid(rent)}>Mark Paid</Button>
+        <Button type="button" variant="outline" size="sm" onClick={() => sendReminder(rent)}>Remind</Button>
+      </div>
+    ) : null
   }));
 
   return (
     <>
-      <AdminModuleHeader title="Rent Management" description="Generate rent, mark paid, generate receipts and send reminders." />
+      <AdminModuleHeader
+        title="Rent Management"
+        description="Generate rent, mark paid, generate receipts and send reminders."
+        actionLabel="Generate Rent"
+        onAction={() => document.getElementById('admin-rent-form')?.scrollIntoView({ behavior: 'smooth' })}
+      />
       <div className="grid gap-4 md:grid-cols-3">
         <StatCard label="Total Collection" value={formatCurrency(totalCollection)} icon={ReceiptIndianRupee} tone="success" />
         <StatCard label="Pending Collection" value={formatCurrency(pendingCollection)} icon={WalletCards} tone="warning" />
         <StatCard label="Overdue Rent" value={formatCurrency(overdue)} icon={Send} tone="danger" />
       </div>
       <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-        <Card>
+        <Card id="admin-rent-form">
           <CardHeader><CardTitle>Generate Rent</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={submit} className="space-y-4">
-              <Input placeholder="Tenant ID" value={form.tenantId} onChange={(e) => setForm({ ...form, tenantId: e.target.value })} />
-              <Input placeholder="Month e.g. July 2026" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} />
-              <Input type="number" placeholder="Amount" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
+              <Input placeholder="Tenant ID" value={form.tenantId} onChange={(e) => setForm({ ...form, tenantId: e.target.value })} required />
+              <Input placeholder="Month e.g. July 2026" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} required />
+              <Input type="number" placeholder="Amount" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
               <Input type="date" value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} />
               {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button className="w-full">Generate Rent</Button>
+              <Button type="submit" className="w-full">Generate Rent</Button>
             </form>
           </CardContent>
         </Card>
         <Card>
           <CardHeader><CardTitle>Rent Records</CardTitle></CardHeader>
-          <CardContent><DataTable columns={[{ key: 'tenant', label: 'Tenant' }, { key: 'room', label: 'Room' }, { key: 'month', label: 'Month' }, { key: 'amount', label: 'Amount' }, { key: 'dueDate', label: 'Due Date' }, { key: 'status', label: 'Status', badge: true }]} rows={rows} /></CardContent>
+          <CardContent>
+            <DataTable
+              columns={[
+                { key: 'tenant', label: 'Tenant' },
+                { key: 'room', label: 'Room' },
+                { key: 'month', label: 'Month' },
+                { key: 'amount', label: 'Amount' },
+                { key: 'dueDate', label: 'Due Date' },
+                { key: 'status', label: 'Status', badge: true },
+                { key: 'actions', label: 'Actions' }
+              ]}
+              rows={rows}
+            />
+          </CardContent>
         </Card>
       </div>
     </>

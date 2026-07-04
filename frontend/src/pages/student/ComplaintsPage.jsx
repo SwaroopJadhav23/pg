@@ -8,13 +8,12 @@ import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { useStudentResource } from '../../hooks/useStudentResource';
 import { studentService } from '../../services/studentService';
-import { complaintsFallback } from './studentPortalData';
 import { formatDate, statusVariant, Timeline } from './studentUi';
 
 const initialForm = { category: 'maintenance', priority: 'medium', description: '', photoUrl: '' };
 
 export function ComplaintsPage() {
-  const { data, setData } = useStudentResource(studentService.complaints, complaintsFallback);
+  const { data, setData } = useStudentResource(studentService.complaints, { complaints: [] });
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState('');
 
@@ -27,7 +26,7 @@ export function ComplaintsPage() {
       setForm(initialForm);
       setMessage('Complaint raised successfully.');
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Complaint saved in demo mode. Connect backend to persist it.');
+      setMessage(error.response?.data?.message || 'Unable to submit complaint.');
     }
   }
 

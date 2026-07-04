@@ -13,16 +13,16 @@ export function formatDate(value) {
   return new Intl.DateTimeFormat('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }).format(new Date(value));
 }
 
-export function SuperHeader({ title, description, actionLabel }) {
+export function SuperHeader({ title, description, actionLabel, onAction }) {
   return (
-    <div className="gradient-panel rounded-[2rem] border p-6 shadow-soft">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div className="gradient-panel rounded-2xl border p-4 shadow-sm md:p-5">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary">Owner Portal</p>
-          <h1 className="mt-2 text-3xl font-extrabold tracking-tight md:text-4xl">{title}</h1>
-          <p className="mt-2 max-w-3xl text-muted-foreground">{description}</p>
+          <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-primary">Owner Portal</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight md:text-[1.75rem]">{title}</h1>
+          <p className="mt-1 max-w-3xl text-sm text-muted-foreground">{description}</p>
         </div>
-        {actionLabel ? <Button>{actionLabel}</Button> : null}
+        {actionLabel ? <Button type="button" size="sm" onClick={onAction}>{actionLabel}</Button> : null}
       </div>
     </div>
   );

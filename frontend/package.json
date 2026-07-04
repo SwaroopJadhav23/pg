@@ -18,9 +18,12 @@
     "framer-motion": "latest",
     "lucide-react": "latest",
     "react": "latest",
+    "react-countup": "^6.5.3",
     "react-dom": "latest",
+    "react-intersection-observer": "^10.0.3",
     "react-router-dom": "latest",
     "recharts": "latest",
+    "swiper": "^14.0.1",
     "tailwind-merge": "latest",
     "tailwindcss-animate": "latest",
     "vite": "latest"

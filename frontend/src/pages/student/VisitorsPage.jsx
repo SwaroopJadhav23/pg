@@ -8,13 +8,12 @@ import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { useStudentResource } from '../../hooks/useStudentResource';
 import { studentService } from '../../services/studentService';
-import { visitorsFallback } from './studentPortalData';
 import { formatDate, statusVariant } from './studentUi';
 
 const initialForm = { name: '', mobile: '', relation: '', visitDate: '', expectedTime: '', purpose: '' };
 
 export function VisitorsPage() {
-  const { data, setData } = useStudentResource(studentService.visitors, visitorsFallback);
+  const { data, setData } = useStudentResource(studentService.visitors, { visitors: [] });
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState('');
 
@@ -27,7 +26,7 @@ export function VisitorsPage() {
       setForm(initialForm);
       setMessage('Visitor request submitted for approval.');
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Visitor request ready. Connect backend to persist it.');
+      setMessage(error.response?.data?.message || 'Could not submit visitor request.');
     }
   }
 

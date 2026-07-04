@@ -7,6 +7,7 @@ export const createPropertySchema = z.object({
   body: z.object({
     name: z.string().trim().min(2),
     imageUrl: optionalText,
+    images: z.array(z.string().trim()).optional(),
     address: optionalText,
     city: optionalText,
     location: z.object({ lat: z.coerce.number().optional(), lng: z.coerce.number().optional() }).optional(),
@@ -14,13 +15,17 @@ export const createPropertySchema = z.object({
     floors: z.coerce.number().nonnegative().default(0),
     rooms: z.coerce.number().nonnegative().default(0),
     amenities: z.array(z.string()).default([]),
-    pricing: z.object({ minRent: z.coerce.number().optional(), maxRent: z.coerce.number().optional() }).optional()
+    pricing: z.object({ minRent: z.coerce.number().optional(), maxRent: z.coerce.number().optional() }).optional(),
+    adminLoginId: optionalText,
+    adminPassword: z.string().min(8).optional().or(z.literal(''))
   })
 });
 
 export const updatePropertySchema = idParam.extend({
   body: createPropertySchema.shape.body.partial().extend({
-    status: z.enum(['active', 'disabled', 'maintenance']).optional()
+    status: z.enum(['active', 'disabled', 'maintenance']).optional(),
+    adminLoginId: optionalText,
+    adminPassword: z.string().min(8).optional().or(z.literal(''))
   })
 });
 

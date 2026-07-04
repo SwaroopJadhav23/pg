@@ -7,12 +7,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/ca
 import { useStudentResource } from '../../hooks/useStudentResource';
 import { formatCurrency } from '../../lib/utils';
 import { studentService } from '../../services/studentService';
-import { rentFallback } from './studentPortalData';
 import { formatDate, statusVariant } from './studentUi';
 
 export function RentPaymentsPage() {
-  const { data } = useStudentResource(studentService.rentPayments, rentFallback);
-  const current = data.currentRent || rentFallback.currentRent;
+  const { data } = useStudentResource(studentService.rentPayments, { currentRent: null, history: [] });
+  const current = data.currentRent || {};
   const rows = (data.history || []).map((rent) => ({
     id: rent._id || rent.month,
     month: rent.month,
@@ -29,7 +28,7 @@ export function RentPaymentsPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Current Month Rent" value={formatCurrency(current.amount || 0)} icon={ReceiptIndianRupee} />
         <StatCard label="Due Date" value={formatDate(current.dueDate)} icon={WalletCards} tone="warning" />
-        <StatCard label="Payment Status" value={current.status} icon={ReceiptIndianRupee} tone={statusVariant(current.status)} />
+        <StatCard label="Payment Status" value={current.status || '-'} icon={ReceiptIndianRupee} tone={statusVariant(current.status)} />
         <StatCard label="Late Fees" value={formatCurrency(current.lateFees || 0)} icon={WalletCards} tone={current.lateFees ? 'danger' : 'success'} />
       </div>
       <Card>

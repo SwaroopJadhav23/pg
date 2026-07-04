@@ -4,28 +4,61 @@ import { DataTable } from '../../components/shared/DataTable';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
+import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { adminFallback } from './adminPortalData';
 import { AdminModuleHeader, adminStatusVariant } from './adminUi';
 
-const initialForm = { floor: '', roomNumber: '', bedNumber: '', roomType: '', sharingDetails: '', rent: 0, status: 'vacant', amenities: [] };
+const initialForm = { floor: '', roomNumber: '', bedNumber: '', roomType: '', sharingDetails: '', rent: '', status: 'vacant', amenities: '' };
 
 export function RoomManagementPage() {
-  const { data, setData } = useResource(adminService.rooms, { rooms: adminFallback.rooms });
+  const { data, setData } = useResource(adminService.rooms, { rooms: [] });
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState('');
 
   async function submit(event) {
     event.preventDefault();
     try {
-      const payload = await adminService.createRoom({ ...form, amenities: String(form.amenities || '').split(',').map((item) => item.trim()).filter(Boolean) });
+      const payload = await adminService.createRoom({
+        ...form,
+        rent: Number(form.rent) || 0,
+        amenities: String(form.amenities || '').split(',').map((item) => item.trim()).filter(Boolean)
+      });
       setData((current) => ({ rooms: [payload.room, ...(current.rooms || [])] }));
       setForm(initialForm);
       setMessage('Room/bed created.');
+      emitToast({ title: 'Room created', description: `${payload.room?.roomNumber || 'Room'} added.` });
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Room form ready. Connect backend to persist.');
+      setMessage(error.response?.data?.message || 'Could not save room.');
+      emitToast({ title: 'Create failed', description: error.response?.data?.message || 'Could not save room.', variant: 'destructive' });
+    }
+  }
+
+  async function assignTenant(room) {
+    const tenantId = window.prompt('Enter tenant ID to assign to this bed:');
+    if (!tenantId?.trim()) return;
+    try {
+      const payload = await adminService.assignTenant(room._id, tenantId.trim());
+      setData((current) => ({
+        rooms: (current.rooms || []).map((item) => (item._id === room._id ? payload.room : item))
+      }));
+      emitToast({ title: 'Tenant assigned', description: room.roomNumber });
+    } catch (error) {
+      emitToast({ title: 'Assign failed', description: error.response?.data?.message || 'Could not assign tenant.', variant: 'destructive' });
+    }
+  }
+
+  async function vacateRoom(room) {
+    if (!window.confirm(`Vacate bed ${room.roomNumber}-${room.bedNumber}?`)) return;
+    try {
+      const payload = await adminService.vacateRoom(room._id);
+      setData((current) => ({
+        rooms: (current.rooms || []).map((item) => (item._id === room._id ? payload.room : item))
+      }));
+      emitToast({ title: 'Bed vacated', description: room.roomNumber });
+    } catch (error) {
+      emitToast({ title: 'Vacate failed', description: error.response?.data?.message || 'Could not vacate room.', variant: 'destructive' });
     }
   }
 
@@ -36,34 +69,60 @@ export function RoomManagementPage() {
     roomType: room.roomType || 'Standard',
     rent: formatCurrency(room.rent || 0),
     status: room.status,
-    variant: adminStatusVariant(room.status)
+    variant: adminStatusVariant(room.status),
+    actions: (
+      <div className="flex flex-wrap gap-2">
+        {room.status !== 'occupied' ? (
+          <Button type="button" variant="outline" size="sm" onClick={() => assignTenant(room)}>Assign</Button>
+        ) : (
+          <Button type="button" variant="outline" size="sm" onClick={() => vacateRoom(room)}>Vacate</Button>
+        )}
+      </div>
+    )
   }));
 
   return (
     <>
-      <AdminModuleHeader title="Room Management" description="Create floors, rooms and beds, assign tenants, transfer tenants and vacate beds." />
+      <AdminModuleHeader
+        title="Room Management"
+        description="Create floors, rooms and beds, assign tenants, transfer tenants and vacate beds."
+        actionLabel="Create Bed"
+        onAction={() => document.getElementById('admin-room-form')?.scrollIntoView({ behavior: 'smooth' })}
+      />
       <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-        <Card>
+        <Card id="admin-room-form">
           <CardHeader><CardTitle className="flex items-center gap-2"><BedDouble className="h-5 w-5" /> Create Bed</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={submit} className="space-y-4">
               <div className="grid gap-3 sm:grid-cols-3">
-                <Input placeholder="Floor" value={form.floor} onChange={(e) => setForm({ ...form, floor: e.target.value })} />
-                <Input placeholder="Room" value={form.roomNumber} onChange={(e) => setForm({ ...form, roomNumber: e.target.value })} />
-                <Input placeholder="Bed" value={form.bedNumber} onChange={(e) => setForm({ ...form, bedNumber: e.target.value })} />
+                <Input placeholder="Floor" value={form.floor} onChange={(e) => setForm({ ...form, floor: e.target.value })} required />
+                <Input placeholder="Room" value={form.roomNumber} onChange={(e) => setForm({ ...form, roomNumber: e.target.value })} required />
+                <Input placeholder="Bed" value={form.bedNumber} onChange={(e) => setForm({ ...form, bedNumber: e.target.value })} required />
               </div>
               <Input placeholder="Room Type" value={form.roomType} onChange={(e) => setForm({ ...form, roomType: e.target.value })} />
               <Input placeholder="Sharing Details" value={form.sharingDetails} onChange={(e) => setForm({ ...form, sharingDetails: e.target.value })} />
               <Input type="number" placeholder="Rent" value={form.rent} onChange={(e) => setForm({ ...form, rent: e.target.value })} />
               <Input placeholder="Amenities comma separated" value={form.amenities} onChange={(e) => setForm({ ...form, amenities: e.target.value })} />
               {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button className="w-full">Create Room / Bed</Button>
+              <Button type="submit" className="w-full">Create Room / Bed</Button>
             </form>
           </CardContent>
         </Card>
         <Card>
           <CardHeader><CardTitle>Property → Floor → Room → Bed</CardTitle></CardHeader>
-          <CardContent><DataTable columns={[{ key: 'hierarchy', label: 'Hierarchy' }, { key: 'tenant', label: 'Tenant' }, { key: 'roomType', label: 'Type' }, { key: 'rent', label: 'Rent' }, { key: 'status', label: 'Status', badge: true }]} rows={rows} /></CardContent>
+          <CardContent>
+            <DataTable
+              columns={[
+                { key: 'hierarchy', label: 'Hierarchy' },
+                { key: 'tenant', label: 'Tenant' },
+                { key: 'roomType', label: 'Type' },
+                { key: 'rent', label: 'Rent' },
+                { key: 'status', label: 'Status', badge: true },
+                { key: 'actions', label: 'Actions' }
+              ]}
+              rows={rows}
+            />
+          </CardContent>
         </Card>
       </div>
     </>

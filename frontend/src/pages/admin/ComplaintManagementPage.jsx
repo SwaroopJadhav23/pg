@@ -2,21 +2,23 @@ import { useState } from 'react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
+import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { adminService } from '../../services/adminService';
-import { adminFallback } from './adminPortalData';
 import { AdminModuleHeader, AdminStatus, MiniTimeline } from './adminUi';
 
 export function ComplaintManagementPage() {
-  const { data, setData } = useResource(adminService.complaints, { complaints: adminFallback.complaints });
+  const { data, setData } = useResource(adminService.complaints, { complaints: [] });
   const [message, setMessage] = useState('');
 
   async function update(complaint, status) {
     try {
       const payload = await adminService.updateComplaint(complaint._id, { status, assignedTo: complaint.assignedTo || 'Staff', note: `Marked ${status}` });
       setData((current) => ({ complaints: (current.complaints || []).map((item) => item._id === complaint._id ? payload.complaint : item) }));
+      emitToast({ title: 'Complaint updated', description: status.replaceAll('_', ' ') });
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Connect backend to update complaint status.');
+      setMessage(error.response?.data?.message || 'Could not update complaint status.');
+      emitToast({ title: 'Update failed', description: error.response?.data?.message || 'Could not update complaint.', variant: 'destructive' });
     }
   }
 
@@ -38,7 +40,9 @@ export function ComplaintManagementPage() {
               <p className="text-sm text-muted-foreground">{complaint.description}</p>
               <Input value={complaint.assignedTo || 'Staff'} readOnly />
               <div className="flex flex-wrap gap-2">
-                {['assigned', 'in_progress', 'resolved'].map((status) => <Button key={status} variant="outline" size="sm" onClick={() => update(complaint, status)}>{status.replaceAll('_', ' ')}</Button>)}
+                {['assigned', 'in_progress', 'resolved'].map((status) => (
+                  <Button key={status} type="button" variant="outline" size="sm" onClick={() => update(complaint, status)}>{status.replaceAll('_', ' ')}</Button>
+                ))}
               </div>
               <MiniTimeline items={complaint.timeline} />
             </CardContent>

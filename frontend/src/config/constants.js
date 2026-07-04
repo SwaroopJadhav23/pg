@@ -9,9 +9,3 @@ export const ROLE_HOME = {
   [ROLES.ADMIN]: '/admin',
   [ROLES.SUPER_ADMIN]: '/super-admin'
 };
-
-export const demoUsers = [
-  { role: 'Student', email: 'student@pg.test', password: 'Password@123' },
-  { role: 'Admin', email: 'admin@pg.test', password: 'Password@123' },
-  { role: 'Super Admin', email: 'owner@pg.test', password: 'Password@123' }
-];

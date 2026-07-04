@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-export function useResource(loader, fallback) {
-  const [data, setData] = useState(fallback);
+export function useResource(loader, initialState = {}) {
+  const [data, setData] = useState(initialState);
   const [loading, setLoading] = useState(Boolean(loader));
   const [error, setError] = useState('');
 
@@ -15,7 +15,7 @@ export function useResource(loader, fallback) {
         if (active) setData(payload);
       })
       .catch((err) => {
-        if (active) setError(err.response?.data?.message || 'Showing demo data until backend data is available.');
+        if (active) setError(err.response?.data?.message || 'Unable to load data.');
       })
       .finally(() => {
         if (active) setLoading(false);

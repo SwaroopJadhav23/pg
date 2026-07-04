@@ -3,16 +3,13 @@ import { ChartCard } from '../../components/shared/ChartCard';
 import { StatCard } from '../../components/shared/StatCard';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
+import { emptyRevenueCenter } from '../../config/emptyStates';
 import { superAdminService } from '../../services/superAdminService';
-import { superFallback } from './superAdminData';
 import { SuperHeader } from './superAdminUi';
 
 export function RevenueCenterPage() {
-  const { data } = useResource(superAdminService.revenueCenter, {
-    metrics: { totalRevenue: superFallback.stats.monthlyRevenue, collectionRate: 91, outstandingAmount: superFallback.stats.pendingRent, profitEstimate: 6120000 },
-    propertyRevenue: superFallback.properties.map((property) => ({ _id: property.name, total: property.monthlyRevenue, paid: property.monthlyRevenue }))
-  });
-  const metrics = data.metrics;
+  const { data } = useResource(superAdminService.revenueCenter, emptyRevenueCenter);
+  const metrics = data.metrics || emptyRevenueCenter.metrics;
 
   return (
     <>
@@ -23,7 +20,7 @@ export function RevenueCenterPage() {
         <StatCard label="Outstanding Amount" value={formatCurrency(metrics.outstandingAmount || 0)} icon={WalletCards} tone="warning" />
         <StatCard label="Profit Estimate" value={formatCurrency(metrics.profitEstimate || 0)} icon={CircleDollarSign} />
       </div>
-      <ChartCard title="Property-wise Revenue Comparison" description="Paid and generated revenue across properties" data={(data.propertyRevenue || []).map((item, index) => ({ name: superFallback.properties[index]?.name || item._id || 'Property', value: item.paid || item.total || 0 }))} type="bar" />
+      <ChartCard title="Property-wise Revenue Comparison" description="Paid and generated revenue across properties" data={(data.propertyRevenue || []).map((item) => ({ name: item.name || item._id || 'Property', value: item.paid || item.total || 0 }))} type="bar" />
     </>
   );
 }

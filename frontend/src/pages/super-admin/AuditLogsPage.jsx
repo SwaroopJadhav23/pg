@@ -2,11 +2,10 @@ import { DataTable } from '../../components/shared/DataTable';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { useResource } from '../../hooks/useResource';
 import { superAdminService } from '../../services/superAdminService';
-import { superFallback } from './superAdminData';
 import { formatDate, SuperHeader } from './superAdminUi';
 
 export function AuditLogsPage() {
-  const { data } = useResource(superAdminService.auditLogs, { logs: superFallback.auditLogs });
+  const { data } = useResource(superAdminService.auditLogs, { logs: [] });
   const rows = (data.logs || []).map((log) => ({
     id: log._id,
     actor: log.actor?.name || 'System',

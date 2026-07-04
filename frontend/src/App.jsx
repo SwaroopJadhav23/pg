@@ -13,6 +13,7 @@ const lazyPage = (loader, exportName) => lazy(() => loader().then((module) => ({
 
 const LoginPage = lazyPage(() => import('./pages/auth/LoginPage'), 'LoginPage');
 const UnauthorizedPage = lazyPage(() => import('./pages/auth/UnauthorizedPage'), 'UnauthorizedPage');
+const LandingPage = lazyPage(() => import('./pages/landing/LandingPage'), 'LandingPage');
 
 const StudentDashboard = lazyPage(() => import('./pages/student/StudentDashboard'), 'StudentDashboard');
 const MyRoomPage = lazyPage(() => import('./pages/student/MyRoomPage'), 'MyRoomPage');
@@ -63,11 +64,12 @@ export default function App() {
   return (
     <Suspense fallback={<RouteFallback />}>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route element={<AuthLayout />}>
           <Route path="/login" element={<LoginPage />} />
         </Route>
+
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
-        <Route path="/" element={<RoleRedirect />} />
 
         <Route element={<ProtectedRoute roles={[ROLES.STUDENT]} />}>
           <Route path="/student" element={<StudentLayout />}>

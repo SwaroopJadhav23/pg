@@ -10,6 +10,7 @@ import {
   createGlobalNotice,
   createManager,
   createProperty,
+  deleteProperty,
   disableManager,
   disableProperty,
   globalDashboard,
@@ -20,9 +21,11 @@ import {
   settings,
   tenantMonitoring,
   updateProperty,
-  updateSettings
+  updateSettings,
+  uploadPropertyPhotos
 } from './superAdmin.controller.js';
 import { requireSuperAdminPermission, SUPER_ADMIN_PERMISSIONS } from './superAdmin.permissions.js';
+import { handleUploadError, propertyPhotosUpload } from '../../middleware/upload.js';
 import { assignManagerSchema, createGlobalNoticeSchema, createManagerSchema, createPropertySchema, settingsSchema, updatePropertySchema } from './superAdmin.validation.js';
 
 const router = Router();
@@ -30,9 +33,11 @@ router.use(authenticate, authorize(ROLES.SUPER_ADMIN));
 router.get('/dashboard', requireSuperAdminPermission(SUPER_ADMIN_PERMISSIONS.DASHBOARD_READ), globalDashboard);
 
 router.get('/properties', requireSuperAdminPermission(SUPER_ADMIN_PERMISSIONS.PROPERTIES_MANAGE), listProperties);
+router.post('/properties/photos', requireSuperAdminPermission(SUPER_ADMIN_PERMISSIONS.PROPERTIES_MANAGE), propertyPhotosUpload, handleUploadError, uploadPropertyPhotos);
 router.post('/properties', requireSuperAdminPermission(SUPER_ADMIN_PERMISSIONS.PROPERTIES_MANAGE), validate(createPropertySchema), createProperty);
 router.patch('/properties/:id', requireSuperAdminPermission(SUPER_ADMIN_PERMISSIONS.PROPERTIES_MANAGE), validate(updatePropertySchema), updateProperty);
 router.post('/properties/:id/disable', requireSuperAdminPermission(SUPER_ADMIN_PERMISSIONS.PROPERTIES_MANAGE), disableProperty);
+router.delete('/properties/:id', requireSuperAdminPermission(SUPER_ADMIN_PERMISSIONS.PROPERTIES_MANAGE), deleteProperty);
 
 router.get('/revenue-center', requireSuperAdminPermission(SUPER_ADMIN_PERMISSIONS.REVENUE_READ), revenueCenter);
 router.get('/tenants', requireSuperAdminPermission(SUPER_ADMIN_PERMISSIONS.TENANTS_READ), tenantMonitoring);

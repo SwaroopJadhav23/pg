@@ -31,9 +31,11 @@ import {
   updateComplaint,
   updateRoom,
   updateTenant,
+  uploadTenantPhoto,
   vacateRoom
 } from './admin.controller.js';
 import { ADMIN_PERMISSIONS, requireAdminPermission } from './admin.permissions.js';
+import { handleUploadError, tenantPhotoUpload } from '../../middleware/upload.js';
 import {
   assignRoomSchema,
   createExpenseSchema,
@@ -57,6 +59,7 @@ router.use(authenticate, authorize(ROLES.ADMIN));
 router.get('/dashboard', requireAdminPermission(ADMIN_PERMISSIONS.DASHBOARD_READ), dashboard);
 
 router.get('/tenants', requireAdminPermission(ADMIN_PERMISSIONS.TENANTS_MANAGE), listTenants);
+router.post('/tenants/photo', requireAdminPermission(ADMIN_PERMISSIONS.TENANTS_MANAGE), tenantPhotoUpload, handleUploadError, uploadTenantPhoto);
 router.post('/tenants', requireAdminPermission(ADMIN_PERMISSIONS.TENANTS_MANAGE), validate(createTenantSchema), createTenant);
 router.patch('/tenants/:id', requireAdminPermission(ADMIN_PERMISSIONS.TENANTS_MANAGE), validate(updateTenantSchema), updateTenant);
 router.delete('/tenants/:id', requireAdminPermission(ADMIN_PERMISSIONS.TENANTS_MANAGE), deleteTenant);

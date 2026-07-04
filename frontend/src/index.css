@@ -21,7 +21,7 @@
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 250 100% 65%;
-    --radius: 1rem;
+    --radius: 0.75rem;
   }
 
   .dark {
@@ -120,4 +120,42 @@
 
 .dark .gradient-panel {
   background: radial-gradient(circle at top left, rgba(139, 120, 255, 0.2), transparent 34%), linear-gradient(135deg, #111827 0%, #0f1020 100%);
+}
+
+.landing-page {
+  scroll-behavior: smooth;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.hero-gradient-orb {
+  animation: hero-float 12s ease-in-out infinite;
+}
+
+@keyframes hero-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(24px, -20px) scale(1.06); }
+}
+
+.testimonial-swiper .swiper-pagination-bullet {
+  background: #C9975A;
+  opacity: 0.35;
+}
+.testimonial-swiper .swiper-pagination-bullet-active {
+  opacity: 1;
+  width: 24px;
+  border-radius: 999px;
+}
+
+.hero-mesh {
+  background-image:
+    radial-gradient(at 20% 20%, rgba(201, 151, 90, 0.08) 0, transparent 50%),
+    radial-gradient(at 80% 10%, rgba(15, 23, 42, 0.04) 0, transparent 45%),
+    radial-gradient(at 50% 80%, rgba(201, 151, 90, 0.05) 0, transparent 50%);
 }

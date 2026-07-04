@@ -4,15 +4,15 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
+import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { superAdminService } from '../../services/superAdminService';
-import { superFallback } from './superAdminData';
 import { formatDate, SuperHeader } from './superAdminUi';
 
 const initialForm = { title: '', body: '', audience: 'all_tenants', propertyIds: [], scheduledAt: '' };
 
 export function NoticeCenterPage() {
-  const { data, setData } = useResource(superAdminService.notices, { notices: superFallback.notices });
+  const { data, setData } = useResource(superAdminService.notices, { notices: [] });
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState('');
 
@@ -23,8 +23,10 @@ export function NoticeCenterPage() {
       setData((current) => ({ notices: [...payload.notices, ...(current.notices || [])] }));
       setForm(initialForm);
       setMessage('Global notice created.');
+      emitToast({ title: 'Notice sent', description: form.title });
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Notice form ready. Connect backend to persist.');
+      setMessage(error.response?.data?.message || 'Could not send notice. Check your inputs.');
+      emitToast({ title: 'Send failed', description: error.response?.data?.message || 'Could not send notice.', variant: 'destructive' });
     }
   }
 
@@ -52,7 +54,7 @@ export function NoticeCenterPage() {
               <Input placeholder="Selected property IDs comma separated" value={form.propertyIds} onChange={(e) => setForm({ ...form, propertyIds: e.target.value })} />
               <Input type="datetime-local" value={form.scheduledAt} onChange={(e) => setForm({ ...form, scheduledAt: e.target.value })} />
               {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button className="w-full">Send Notice</Button>
+              <Button type="submit" className="w-full">Send Notice</Button>
             </form>
           </CardContent>
         </Card>

@@ -1,11 +1,109 @@
 import { User } from '../../models/User.js';
 import { Property } from '../../models/Property.js';
 import { PlatformSetting } from '../../models/PlatformSetting.js';
-import { AuditLog, Complaint, Expense, Notice, Rent, Room, Staff, Visitor } from '../../models/Operations.js';
+import { AuditLog, Complaint, Document, Expense, Notice, Rent, Room, Staff, SupportTicket, Visitor } from '../../models/Operations.js';
 import { ROLES } from '../../constants/roles.js';
 import { created, success } from '../../utils/apiResponse.js';
 import { AppError } from '../../utils/AppError.js';
 import { paginate, regexSearch } from '../../utils/pagination.js';
+
+const PROPERTY_ADMIN_PASSWORD = 'admin123';
+
+function propertyAdminEmail(property) {
+  const slug = property.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'property';
+  return `${slug}.${property._id}@pg.admin`;
+}
+
+function resolveAdminLoginId(name, adminLoginId) {
+  return (adminLoginId || name || '').trim();
+}
+
+function withPropertyImages(propertyData) {
+  const images = propertyData.images?.length
+    ? propertyData.images
+    : propertyData.imageUrl
+      ? [propertyData.imageUrl]
+      : [];
+
+  return {
+    ...propertyData,
+    images,
+    imageUrl: propertyData.imageUrl || images[0] || ''
+  };
+}
+
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+async function ensureUniqueAdminLoginId(loginId, excludePropertyId) {
+  if (!loginId) return;
+  const filter = {
+    $or: [
+      { adminLoginId: { $regex: new RegExp(`^${escapeRegex(loginId)}$`, 'i') } },
+      { name: { $regex: new RegExp(`^${escapeRegex(loginId)}$`, 'i') } }
+    ]
+  };
+  if (excludePropertyId) filter._id = { $ne: excludePropertyId };
+  const conflict = await Property.findOne(filter);
+  if (conflict) throw new AppError('Admin login ID is already used by another property', 409);
+}
+
+async function syncPropertyAdmin(property, { adminLoginId, adminPassword }) {
+  const loginId = resolveAdminLoginId(property.name, adminLoginId ?? property.adminLoginId);
+  let manager = property.manager
+    ? await User.findById(property.manager)
+    : await User.findOne({ role: ROLES.ADMIN, property: property._id });
+
+  if (!manager) {
+    manager = await User.create({
+      name: `${property.name} Admin`,
+      email: propertyAdminEmail(property),
+      password: adminPassword?.trim() || PROPERTY_ADMIN_PASSWORD,
+      role: ROLES.ADMIN,
+      property: property._id,
+      status: 'active'
+    });
+    property.manager = manager._id;
+    await property.save();
+    return manager;
+  }
+
+  manager.name = `${property.name} Admin`;
+  if (adminPassword?.trim()) {
+    manager.password = adminPassword.trim();
+  }
+  await manager.save();
+  return manager;
+}
+
+function adminLoginDetails(property, password) {
+  const details = {
+    propertyName: property.name,
+    adminLoginId: resolveAdminLoginId(property.name, property.adminLoginId)
+  };
+  if (password) details.password = password;
+  return details;
+}
+
+function buildAnalyticsInsights(propertyPerformance, complaints, revenueTrends) {
+  const insights = [];
+  const highOccupancy = propertyPerformance.filter((property) => (property.occupancyRate || 0) >= 90);
+  if (highOccupancy.length) {
+    insights.push(`${highOccupancy.length} ${highOccupancy.length === 1 ? 'property is' : 'properties are'} at or above 90% occupancy.`);
+  }
+  const openComplaints = complaints.find((item) => item._id === 'open' || item._id === 'assigned' || item._id === 'in_progress');
+  if (openComplaints?.count) {
+    insights.push(`${openComplaints.count} complaints need attention across the portfolio.`);
+  }
+  if (revenueTrends.length >= 2) {
+    const latest = revenueTrends[revenueTrends.length - 1]?.total || 0;
+    const previous = revenueTrends[revenueTrends.length - 2]?.total || 0;
+    if (latest > previous) insights.push('Latest recorded revenue is higher than the previous period.');
+    if (latest < previous) insights.push('Latest recorded revenue is lower than the previous period.');
+  }
+  return insights;
+}
 
 async function audit(req, action, entity, entityId, metadata = {}) {
   await AuditLog.create({ actor: req.user._id, action, entity, entityId: String(entityId || ''), metadata, ip: req.ip });
@@ -39,29 +137,50 @@ async function propertyCards() {
 }
 
 export async function globalDashboard(req, res) {
-  const [properties, rooms, beds, occupiedBeds, tenants, revenue, pendingRent, openComplaints, propertyPerformance, complaintAnalytics] = await Promise.all([
+  const [properties, rooms, beds, occupiedBeds, tenants, revenue, pendingRent, openComplaints, propertyPerformance, complaintAnalytics, monthlyGrowth] = await Promise.all([
     Property.countDocuments(), Room.distinct('roomNumber'), Room.countDocuments(), Room.countDocuments({ status: 'occupied' }), User.countDocuments({ role: ROLES.STUDENT, status: 'active' }),
     Rent.aggregate([{ $match: { status: 'paid' } }, { $group: { _id: null, total: { $sum: '$amount' } } }]),
     Rent.aggregate([{ $match: { status: { $in: ['pending', 'overdue', 'generated'] } } }, { $group: { _id: null, total: { $sum: '$amount' } } }]),
     Complaint.countDocuments({ status: { $ne: 'resolved' } }),
     propertyCards(),
-    Complaint.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }])
+    Complaint.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
+    Rent.aggregate([
+      { $match: { status: 'paid' } },
+      { $group: { _id: '$month', value: { $sum: '$amount' } } },
+      { $sort: { _id: 1 } },
+      { $limit: 6 }
+    ])
   ]);
   success(res, {
     stats: { totalProperties: properties, totalRooms: rooms.length, totalBeds: beds, occupiedBeds, activeTenants: tenants, monthlyRevenue: revenue[0]?.total || 0, pendingRent: pendingRent[0]?.total || 0, openComplaints },
     propertyPerformance,
     complaintAnalytics,
-    monthlyGrowth: [
-      { name: 'Jan', value: 420000 }, { name: 'Feb', value: 470000 }, { name: 'Mar', value: 510000 },
-      { name: 'Apr', value: 545000 }, { name: 'May', value: 590000 }, { name: 'Jun', value: revenue[0]?.total || 640000 }
-    ]
+    monthlyGrowth: monthlyGrowth.map((item) => ({ name: item._id || 'Unknown', value: item.value || 0 }))
   });
 }
 
 export async function createProperty(req, res) {
-  const property = await Property.create(req.body);
-  await audit(req, 'property.created', 'Property', property._id, { name: property.name });
-  created(res, { property }, 'Property created');
+  const { adminLoginId, adminPassword, ...propertyData } = req.body;
+  const loginId = resolveAdminLoginId(propertyData.name, adminLoginId);
+  await ensureUniqueAdminLoginId(loginId);
+
+  const property = await Property.create({
+    ...withPropertyImages(propertyData),
+    adminLoginId: loginId
+  });
+
+  await syncPropertyAdmin(property, {
+    adminLoginId: property.adminLoginId,
+    adminPassword: adminPassword?.trim() || PROPERTY_ADMIN_PASSWORD
+  });
+
+  await audit(req, 'property.created', 'Property', property._id, { name: property.name, adminLoginId: property.adminLoginId });
+  const populatedProperty = await Property.findById(property._id).populate('manager', 'name email mobile');
+  const password = adminPassword?.trim() || PROPERTY_ADMIN_PASSWORD;
+  created(res, {
+    property: populatedProperty,
+    adminLogin: adminLoginDetails(property, password)
+  }, 'Property created');
 }
 
 export async function listProperties(req, res) {
@@ -69,11 +188,41 @@ export async function listProperties(req, res) {
   success(res, { properties });
 }
 
+export async function uploadPropertyPhotos(req, res) {
+  if (!req.files?.length) throw new AppError('At least one photo is required', 400);
+  const photoUrls = req.files.map((file) => `/upload/${file.filename}`);
+  success(res, { photoUrls }, 'Property photos uploaded');
+}
+
 export async function updateProperty(req, res) {
-  const property = await Property.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-  if (!property) throw new AppError('Property not found', 404);
-  await audit(req, 'property.updated', 'Property', property._id);
-  success(res, { property }, 'Property updated');
+  const { adminLoginId, adminPassword, ...propertyData } = req.body;
+  const existing = await Property.findById(req.params.id);
+  if (!existing) throw new AppError('Property not found', 404);
+
+  const nextName = propertyData.name ?? existing.name;
+  const nextLoginId = resolveAdminLoginId(nextName, adminLoginId ?? existing.adminLoginId);
+  await ensureUniqueAdminLoginId(nextLoginId, existing._id);
+
+  const updates = withPropertyImages({
+    ...propertyData,
+    ...(adminLoginId !== undefined || propertyData.name
+      ? { adminLoginId: nextLoginId }
+      : {})
+  });
+
+  const property = await Property.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
+  await syncPropertyAdmin(property, { adminLoginId: property.adminLoginId, adminPassword });
+
+  await audit(req, 'property.updated', 'Property', property._id, {
+    adminLoginId: property.adminLoginId,
+    passwordUpdated: Boolean(adminPassword?.trim())
+  });
+
+  const populatedProperty = await Property.findById(property._id).populate('manager', 'name email mobile');
+  success(res, {
+    property: populatedProperty,
+    adminLogin: adminLoginDetails(property, adminPassword?.trim() || undefined)
+  }, 'Property updated');
 }
 
 export async function disableProperty(req, res) {
@@ -81,6 +230,35 @@ export async function disableProperty(req, res) {
   if (!property) throw new AppError('Property not found', 404);
   await audit(req, 'property.disabled', 'Property', property._id);
   success(res, { property }, 'Property disabled');
+}
+
+export async function deleteProperty(req, res) {
+  const property = await Property.findById(req.params.id);
+  if (!property) throw new AppError('Property not found', 404);
+
+  const activeTenants = await User.countDocuments({ property: property._id, role: ROLES.STUDENT, status: 'active' });
+  if (activeTenants > 0) {
+    throw new AppError('Cannot delete property with active tenants. Move or deactivate tenants first.', 400);
+  }
+
+  const propertyId = property._id;
+  await Promise.all([
+    Room.deleteMany({ property: propertyId }),
+    Rent.deleteMany({ property: propertyId }),
+    Complaint.deleteMany({ property: propertyId }),
+    Notice.deleteMany({ property: propertyId }),
+    Expense.deleteMany({ property: propertyId }),
+    Staff.deleteMany({ property: propertyId }),
+    Visitor.deleteMany({ property: propertyId }),
+    SupportTicket.deleteMany({ property: propertyId }),
+    Document.deleteMany({ property: propertyId }),
+    User.deleteMany({ property: propertyId, role: ROLES.ADMIN }),
+    User.updateMany({ property: propertyId, role: { $ne: ROLES.ADMIN } }, { $unset: { property: '' } })
+  ]);
+
+  await Property.findByIdAndDelete(propertyId);
+  await audit(req, 'property.deleted', 'Property', propertyId, { name: property.name });
+  success(res, { propertyId }, 'Property deleted');
 }
 
 export async function createManager(req, res) {
@@ -171,7 +349,7 @@ export async function analytics(req, res) {
     revenueTrends,
     tenantRetention,
     operational: { staffCount, visitorCount },
-    insights: ['Revenue forecast is positive based on current paid rent.', 'Properties above 90% occupancy should plan capacity expansion.', 'Open complaint resolution time should be monitored weekly.'],
+    insights: buildAnalyticsInsights(propertyPerformance, complaints, revenueTrends),
     exports: ['pdf', 'excel', 'csv']
   });
 }

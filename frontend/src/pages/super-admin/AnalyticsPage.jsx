@@ -1,23 +1,57 @@
 import { ChartCard } from '../../components/shared/ChartCard';
 import { StatCard } from '../../components/shared/StatCard';
+import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
+import { emptyAnalytics } from '../../config/emptyStates';
 import { superAdminService } from '../../services/superAdminService';
-import { superFallback } from './superAdminData';
 import { SuperHeader } from './superAdminUi';
 
+function downloadCsv(filename, rows) {
+  const csv = rows.map((row) => row.map((cell) => `"${String(cell ?? '').replaceAll('"', '""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
 export function AnalyticsPage() {
-  const { data } = useResource(superAdminService.analytics, {
-    propertyPerformance: superFallback.properties,
-    complaints: [{ _id: 'assigned', count: 8 }, { _id: 'in_progress', count: 12 }, { _id: 'resolved', count: 40 }],
-    revenueTrends: [{ _id: 'May 2026', total: 5900000 }, { _id: 'June 2026', total: 7840000 }],
-    tenantRetention: [{ _id: 'active', count: 421 }, { _id: 'inactive', count: 18 }],
-    operational: { staffCount: 24, visitorCount: 286 },
-    insights: ['Revenue forecast is positive.', 'High occupancy properties need expansion planning.']
-  });
+  const { data } = useResource(superAdminService.analytics, emptyAnalytics);
+
+  function exportCsv() {
+    const propertyRows = (data.propertyPerformance || []).map((property) => [
+      property.name,
+      property.city,
+      property.occupancyRate || 0,
+      property.monthlyRevenue || 0,
+      property.status
+    ]);
+    const revenueRows = (data.revenueTrends || []).map((item) => [item._id, item.total]);
+    const complaintRows = (data.complaints || []).map((item) => [item._id, item.count]);
+    const rows = [
+      ['Property', 'City', 'Occupancy %', 'Monthly Revenue', 'Status'],
+      ...propertyRows,
+      [],
+      ['Revenue Month', 'Total'],
+      ...revenueRows,
+      [],
+      ['Complaint Status', 'Count'],
+      ...complaintRows
+    ];
+    downloadCsv('om-sai-analytics.csv', rows);
+    emitToast({ title: 'Export complete', description: 'Analytics CSV downloaded.' });
+  }
 
   return (
     <>
-      <SuperHeader title="Analytics" description="Advanced reports for occupancy trends, revenue trends, property performance, tenant retention and complaint resolution." actionLabel="Export CSV" />
+      <SuperHeader
+        title="Analytics"
+        description="Advanced reports for occupancy trends, revenue trends, property performance, tenant retention and complaint resolution."
+        actionLabel="Export CSV"
+        onAction={exportCsv}
+      />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Properties Analyzed" value={(data.propertyPerformance || []).length} />
         <StatCard label="Staff Count" value={data.operational?.staffCount || 0} />

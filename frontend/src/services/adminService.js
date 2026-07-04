@@ -3,6 +3,11 @@ import api from '../lib/api';
 export const adminService = {
   dashboard: () => api.get('/admin/dashboard').then((response) => response.data.data),
   tenants: () => api.get('/admin/tenants').then((response) => response.data.data),
+  uploadTenantPhoto: (file) => {
+    const formData = new FormData();
+    formData.append('photo', file);
+    return api.post('/admin/tenants/photo', formData).then((response) => response.data.data);
+  },
   createTenant: (payload) => api.post('/admin/tenants', payload).then((response) => response.data.data),
   rooms: () => api.get('/admin/rooms').then((response) => response.data.data),
   createRoom: (payload) => api.post('/admin/rooms', payload).then((response) => response.data.data),

@@ -1,22 +1,21 @@
 import { BedDouble, Building2, ClipboardList, ReceiptIndianRupee, TrendingUp, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { ChartCard } from '../../components/shared/ChartCard';
 import { DataTable } from '../../components/shared/DataTable';
 import { PageHeader } from '../../components/shared/PageHeader';
 import { StatCard } from '../../components/shared/StatCard';
+import { Button } from '../../components/ui/button';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
+import { emptySuperDashboard } from '../../config/emptyStates';
 import { superAdminService } from '../../services/superAdminService';
-import { superFallback } from './superAdminData';
 import { superStatusVariant } from './superAdminUi';
 
 export function SuperAdminDashboard() {
-  const { data } = useResource(superAdminService.dashboard, {
-    stats: superFallback.stats,
-    propertyPerformance: superFallback.properties,
-    monthlyGrowth: [{ name: 'Jan', value: 4200000 }, { name: 'Feb', value: 4700000 }, { name: 'Mar', value: 5100000 }, { name: 'Apr', value: 5450000 }, { name: 'May', value: 5900000 }, { name: 'Jun', value: 7840000 }]
-  });
-  const stats = data.stats || superFallback.stats;
-  const properties = data.propertyPerformance || superFallback.properties;
+  const navigate = useNavigate();
+  const { data } = useResource(superAdminService.dashboard, emptySuperDashboard);
+  const stats = data.stats || emptySuperDashboard.stats;
+  const properties = data.propertyPerformance || [];
   const propertyRows = properties.map((property) => ({
     id: property._id,
     name: property.name,
@@ -24,12 +23,23 @@ export function SuperAdminDashboard() {
     revenue: formatCurrency(property.monthlyRevenue || 0),
     occupancy: `${property.occupancyRate || 0}%`,
     status: property.status,
-    variant: superStatusVariant(property.status)
+    variant: superStatusVariant(property.status),
+    actions: (
+      <Button type="button" variant="outline" size="sm" onClick={() => navigate('/super-admin/properties')}>
+        Manage
+      </Button>
+    )
   }));
 
   return (
     <>
-      <PageHeader eyebrow="Super Admin Portal" title="Enterprise Multi-PG Control Tower" description="Own and monitor every branch, property manager, revenue stream, complaint queue and audit trail from one executive dashboard." actionLabel="Create Property" />
+      <PageHeader
+        eyebrow="Super Admin Portal"
+        title="Enterprise Multi-PG Control Tower"
+        description="Own and monitor every branch, property manager, revenue stream, complaint queue and audit trail from one executive dashboard."
+        actionLabel="Create Property"
+        onAction={() => navigate('/super-admin/properties')}
+      />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard label="Total Properties" value={stats.totalProperties} icon={Building2} delta="Multi-city portfolio" />
         <StatCard label="Total Beds" value={stats.totalBeds} icon={BedDouble} tone="success" delta={`${stats.occupiedBeds} occupied`} />
@@ -42,7 +52,17 @@ export function SuperAdminDashboard() {
         <ChartCard title="Monthly Growth" description="Portfolio revenue growth" data={data.monthlyGrowth || []} />
         <ChartCard title="Occupancy by Property" description="Branch level occupancy rate" data={properties.map((property) => ({ name: property.name, value: property.occupancyRate || 0 }))} type="bar" />
       </div>
-      <DataTable columns={[{ key: 'name', label: 'Property' }, { key: 'city', label: 'City' }, { key: 'revenue', label: 'Revenue' }, { key: 'occupancy', label: 'Occupancy' }, { key: 'status', label: 'Status', badge: true }]} rows={propertyRows} />
+      <DataTable
+        columns={[
+          { key: 'name', label: 'Property' },
+          { key: 'city', label: 'City' },
+          { key: 'revenue', label: 'Revenue' },
+          { key: 'occupancy', label: 'Occupancy' },
+          { key: 'status', label: 'Status', badge: true },
+          { key: 'actions', label: 'Actions' }
+        ]}
+        rows={propertyRows}
+      />
     </>
   );
 }
