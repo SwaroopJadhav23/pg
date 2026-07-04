@@ -111,7 +111,7 @@ export function HeroSection({ onBook, onTour }) {
   const orbY = useTransform(scrollY, [0, 500], [0, 80]);
 
   return (
-    <section className={`hero-mesh relative overflow-hidden ${sectionY} pt-28 md:pt-36`}>
+    <section className={`hero-mesh relative overflow-hidden ${sectionY} pt-24 sm:pt-28 md:pt-36`}>
       <motion.div style={{ y: orbY }} className="pointer-events-none absolute inset-0">
         <div className="hero-orb absolute -left-24 top-16 h-80 w-80 rounded-full bg-lnd-secondary/20 blur-3xl" />
         <div className="hero-orb absolute -right-16 top-32 h-72 w-72 rounded-full bg-lnd-primary/15 blur-3xl [animation-delay:3s]" />
@@ -124,7 +124,7 @@ export function HeroSection({ onBook, onTour }) {
               Nashik&apos;s premium boys PG
             </motion.p>
 
-            <motion.h1 variants={fadeUp} className="mt-5 text-display text-slate-900 md:text-[3.5rem] lg:text-display">
+            <motion.h1 variants={fadeUp} className="mt-5 text-[2rem] font-extrabold leading-[1.08] text-slate-900 sm:text-[2.5rem] md:text-[3.25rem] lg:text-display">
               More than a PG.
               <span className="mt-2 block">
                 A <span className="text-gradient">home</span> away from home.

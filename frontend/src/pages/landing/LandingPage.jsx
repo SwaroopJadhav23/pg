@@ -81,7 +81,7 @@ export function LandingPage() {
   if (loading) return <PageLoader />;
 
   return (
-    <div className="landing-page section-light">
+    <div className="landing-page section-light pb-28 md:pb-0">
       <LandingNavbar
         scrolled={scrolled}
         onBook={openBook}

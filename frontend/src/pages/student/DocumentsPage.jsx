@@ -23,10 +23,10 @@ export function DocumentsPage() {
               </div>
               <h3 className="mt-5 text-lg font-bold">{document.title}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{document.mimeType || 'Document'} • {formatBytes(document.size)} • {formatDate(document.createdAt)}</p>
-              <div className="mt-6 grid grid-cols-3 gap-2">
-                <Button variant="outline" size="sm"><Eye className="h-4 w-4" /> Preview</Button>
-                <Button variant="outline" size="sm"><Download className="h-4 w-4" /> Download</Button>
-                <Button variant="outline" size="sm"><Share2 className="h-4 w-4" /> Share</Button>
+              <div className="mt-6 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <Button variant="outline" size="sm" className="h-10 w-full justify-center"><Eye className="h-4 w-4" /> Preview</Button>
+                <Button variant="outline" size="sm" className="h-10 w-full justify-center"><Download className="h-4 w-4" /> Download</Button>
+                <Button variant="outline" size="sm" className="h-10 w-full justify-center"><Share2 className="h-4 w-4" /> Share</Button>
               </div>
             </CardContent>
           </Card>

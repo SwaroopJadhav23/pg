@@ -15,12 +15,41 @@ export function ComparisonTable() {
           description="Don't settle for less. Here's why 500+ residents chose us over other PGs in Nashik."
         />
 
+        <div className="mt-10 space-y-3 md:hidden">
+          {COMPARISON.features.map((feature, i) => (
+            <motion.div
+              key={feature}
+              initial={{ opacity: 0, y: 12 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewport}
+              transition={{ delay: i * 0.03 }}
+              className="lnd-card rounded-2xl p-4 shadow-glass"
+            >
+              <p className="font-semibold text-slate-900">{feature}</p>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <div className="rounded-xl bg-teal-50 px-3 py-3 text-center">
+                  <p className="text-xs font-bold uppercase tracking-wide text-teal-800">Us</p>
+                  <div className="mt-2 flex justify-center">
+                    {COMPARISON.us[i] ? <Check className="h-5 w-5 text-emerald-600" /> : <X className="h-5 w-5 text-red-500" />}
+                  </div>
+                </div>
+                <div className="rounded-xl bg-slate-50 px-3 py-3 text-center">
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-500">Others</p>
+                  <div className="mt-2 flex justify-center">
+                    {COMPARISON.others[i] ? <Check className="h-5 w-5 text-slate-400" /> : <X className="h-5 w-5 text-slate-300" />}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
         <motion.div
           variants={fadeUp}
           initial="hidden"
           whileInView="visible"
           viewport={viewport}
-          className="lnd-card mt-14 overflow-hidden rounded-[24px] shadow-float"
+          className="lnd-card mt-14 hidden overflow-hidden rounded-[24px] shadow-float md:block"
         >
           <div className="overflow-x-auto">
             <table className="w-full min-w-[520px] text-left text-body">

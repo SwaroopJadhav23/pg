@@ -26,7 +26,7 @@ export function LandingNavbar({ scrolled, onBook }) {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+        className={`safe-top fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
           scrolled
             ? 'lnd-glass border-b border-lnd-border/60 py-3 shadow-lg'
             : 'border-b border-transparent bg-white/40 py-5 backdrop-blur-xl'
@@ -71,7 +71,7 @@ export function LandingNavbar({ scrolled, onBook }) {
             >
               Book Now
             </motion.button>
-            <button type="button" onClick={() => setOpen(true)} className="rounded-xl p-2.5 text-slate-900 lg:hidden">
+            <button type="button" onClick={() => setOpen(true)} className="flex h-11 w-11 items-center justify-center rounded-xl text-slate-900 lg:hidden" aria-label="Open menu">
               <Menu className="h-6 w-6" />
             </button>
           </div>
@@ -82,7 +82,7 @@ export function LandingNavbar({ scrolled, onBook }) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 z-[60] bg-lnd-dark/95 p-6 backdrop-blur-xl lg:hidden"
+          className="safe-top fixed inset-0 z-[60] bg-lnd-dark/95 p-6 backdrop-blur-xl lg:hidden"
         >
           <div className="flex justify-end">
             <button type="button" onClick={() => setOpen(false)} className="rounded-full bg-white/10 p-3 text-white">

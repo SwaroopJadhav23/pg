@@ -29,15 +29,15 @@ export function LoginPage() {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Building2 className="h-7 w-7" /></div>
-        <CardTitle className="text-2xl">Login to PG OS</CardTitle>
-        <CardDescription>Super admin: superadmin / 123456. Property admins use their login ID + password.</CardDescription>
+        <CardTitle className="text-xl sm:text-2xl">Login to PG OS</CardTitle>
+        <CardDescription className="text-sm">Super admin: superadmin / 123456. Property admins use their login ID + password.</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input type="text" placeholder="Email or Admin Login ID" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} required />
           <Input type="password" placeholder="Password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required />
           {error ? <p className="rounded-xl bg-rose-50 p-3 text-sm text-rose-600">{error}</p> : null}
-          <Button className="w-full" disabled={loading}>{loading ? 'Signing in...' : 'Sign in'}</Button>
+          <Button className="h-11 w-full" disabled={loading}>{loading ? 'Signing in...' : 'Sign in'}</Button>
         </form>
         <p className="mt-6 text-center text-sm text-muted-foreground">
           <Link to="/" className="font-semibold text-primary hover:underline">← Back to PG listing</Link>

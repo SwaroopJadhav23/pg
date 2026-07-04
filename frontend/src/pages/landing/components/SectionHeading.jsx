@@ -16,7 +16,7 @@ export function SectionHeading({ eyebrow, title, description, align = 'center', 
           {eyebrow}
         </p>
       ) : null}
-      <h2 className={`mt-4 text-h1 text-slate-900 md:text-[2.75rem] ${dark ? '!text-white' : ''}`}>{title}</h2>
+      <h2 className={`mt-4 text-[1.75rem] font-extrabold leading-tight text-slate-900 sm:text-h1 md:text-[2.75rem] ${dark ? '!text-white' : ''}`}>{title}</h2>
       {description ? (
         <p className={`mt-4 text-body-lg ${dark ? 'text-slate-300' : 'text-slate-500'}`}>{description}</p>
       ) : null}

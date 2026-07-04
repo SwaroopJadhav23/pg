@@ -66,7 +66,8 @@ export function FloatingActions({ onBook }) {
         rel="noreferrer"
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
-        className="fixed bottom-[4.75rem] right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card md:hidden"
+        className="fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-card md:hidden"
+        style={{ bottom: 'calc(5.5rem + env(safe-area-inset-bottom, 0px))' }}
         aria-label="WhatsApp"
       >
         <MessageCircle className="h-7 w-7" />
@@ -75,16 +76,19 @@ export function FloatingActions({ onBook }) {
       <motion.div
         initial={{ y: 100 }}
         animate={{ y: 0 }}
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-lnd-border bg-white/95 p-3 backdrop-blur-xl md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-lnd-border bg-white/95 backdrop-blur-xl md:hidden"
+        style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}
       >
-        <motion.button
-          type="button"
-          whileTap={{ scale: 0.98 }}
-          onClick={onBook}
-          className="btn-lnd-primary w-full py-3.5 text-sm font-bold"
-        >
-          <Calendar className="h-4 w-4" /> Book Now
-        </motion.button>
+        <div className="px-3 pt-3">
+          <motion.button
+            type="button"
+            whileTap={{ scale: 0.98 }}
+            onClick={onBook}
+            className="btn-lnd-primary w-full py-3.5 text-sm font-bold"
+          >
+            <Calendar className="h-4 w-4" /> Book Now
+          </motion.button>
+        </div>
       </motion.div>
     </>
   );

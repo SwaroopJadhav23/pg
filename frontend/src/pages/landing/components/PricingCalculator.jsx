@@ -82,7 +82,7 @@ export function PricingCalculator({ onBook }) {
               </p>
               <p className="mt-8 flex items-start gap-1">
                 <IndianRupee className="mt-3 h-8 w-8 text-lnd-accent" />
-                <span className="text-[3.5rem] font-extrabold leading-none tracking-tight">
+                <span className="text-[2.25rem] font-extrabold leading-none tracking-tight sm:text-[2.75rem] md:text-[3.5rem]">
                   <AnimatedCounter key={total} end={total} duration={0.8} />
                 </span>
               </p>

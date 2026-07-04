@@ -5,7 +5,7 @@ export const lndCard =
 export const lndCardHover =
   'transition-all duration-300 hover:-translate-y-1.5 hover:shadow-card-hover';
 
-export const sectionY = 'py-20 md:py-28 lg:py-32';
+export const sectionY = 'py-14 sm:py-20 md:py-28 lg:py-32';
 
 export const sectionAlt = 'section-alt';
 
