@@ -65,7 +65,7 @@ export function PortalShell({ roleLabel, navigation }) {
         </nav>
       </aside>
 
-      <div className="lg:pl-60">
+      <div className="min-w-0 w-full max-w-full lg:pl-60">
         <header className="safe-top sticky top-0 z-30 border-b bg-white/80 px-3 py-2 backdrop-blur dark:bg-slate-950/80 sm:px-4 md:px-6">
           <div className="flex items-center justify-between gap-2 sm:gap-3">
             <div className="flex min-w-0 flex-1 items-center gap-2">
@@ -113,7 +113,7 @@ export function PortalShell({ roleLabel, navigation }) {
           </div>
         ) : null}
 
-        <main className="safe-x w-full max-w-full space-y-4 overflow-x-hidden p-3 text-sm sm:space-y-5 sm:p-4 md:p-5 lg:p-6"><Outlet /></main>
+        <main className="safe-x min-w-0 w-full max-w-full space-y-4 p-3 text-sm sm:space-y-5 sm:p-4 md:p-5 lg:p-6"><Outlet /></main>
       </div>
     </div>
   );

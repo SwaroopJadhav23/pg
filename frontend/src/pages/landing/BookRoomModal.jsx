@@ -41,16 +41,17 @@ export function BookRoomModal({ open, onClose }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[110] flex items-center justify-center bg-lnd-dark/70 p-4 backdrop-blur-md"
+          className="fixed inset-0 z-[110] flex items-end justify-center bg-lnd-dark/70 p-3 backdrop-blur-md sm:items-center sm:p-4"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-lg rounded-[24px] border border-lnd-border bg-white p-8 shadow-float"
+            className="relative max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[24px] border border-lnd-border bg-white p-5 shadow-float sm:p-8"
+            style={{ maxWidth: 'min(32rem, calc(100% - 1.5rem))' }}
           >
-        <button type="button" onClick={handleClose} className="absolute right-4 top-4 rounded-full p-2 text-slate-500 hover:bg-slate-100">
+        <button type="button" onClick={handleClose} className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 sm:right-4 sm:top-4">
           <X className="h-5 w-5" />
         </button>
 
@@ -66,14 +67,14 @@ export function BookRoomModal({ open, onClose }) {
           </div>
         ) : (
           <>
-            <h3 className="flex items-center gap-2 text-2xl font-bold text-slate-900">
+            <h3 className="flex items-center gap-2 pr-10 text-xl font-bold text-slate-900 sm:text-2xl">
               <Sparkles className="h-6 w-6 text-lnd-primary" /> Book your room
             </h3>
             <p className="mt-1 text-sm text-slate-600">Share your details and we will confirm availability for Pg rooms for boys, Nashik.</p>
             <form onSubmit={handleSubmit} className="mt-6 space-y-4">
               <div className="relative">
                 <User className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
-                <Input className="pl-10" placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+                <Input className="h-11 pl-10" placeholder="Your name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
               </div>
               <div className="relative">
                 <Phone className="pointer-events-none absolute left-3 top-3.5 h-4 w-4 text-slate-400" />

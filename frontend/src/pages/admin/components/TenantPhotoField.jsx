@@ -90,15 +90,15 @@ export function TenantPhotoField({ previewUrl, onPhotoChange, onClear }) {
           No photo selected
         </div>
       )}
-      <div className="flex flex-wrap gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
+      <div className="grid grid-cols-1 gap-2 sm:flex sm:flex-wrap">
+        <Button type="button" variant="outline" className="h-11 w-full sm:w-auto" size="sm" onClick={() => fileInputRef.current?.click()}>
           <ImageUp className="h-4 w-4" /> Upload Image
         </Button>
-        <Button type="button" variant="outline" size="sm" onClick={cameraOpen ? stopCamera : startCamera}>
+        <Button type="button" variant="outline" className="h-11 w-full sm:w-auto" size="sm" onClick={cameraOpen ? stopCamera : startCamera}>
           <Camera className="h-4 w-4" /> {cameraOpen ? 'Close Camera' : 'Use Camera'}
         </Button>
         {cameraOpen ? (
-          <Button type="button" size="sm" onClick={capturePhoto}>Capture Photo</Button>
+          <Button type="button" className="h-11 w-full sm:w-auto" size="sm" onClick={capturePhoto}>Capture Photo</Button>
         ) : null}
       </div>
       <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />

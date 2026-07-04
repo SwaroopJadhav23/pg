@@ -2,13 +2,12 @@ import { useState } from 'react';
 import { BedDouble } from 'lucide-react';
 import { DataTable } from '../../components/shared/DataTable';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { AdminModuleHeader, adminStatusVariant } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, adminStatusVariant } from './adminUi';
 
 const initialForm = { floor: '', roomNumber: '', bedNumber: '', roomType: '', sharingDetails: '', rent: '', status: 'vacant', amenities: '' };
 
@@ -89,42 +88,39 @@ export function RoomManagementPage() {
         actionLabel="Create Bed"
         onAction={() => document.getElementById('admin-room-form')?.scrollIntoView({ behavior: 'smooth' })}
       />
-      <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-        <Card id="admin-room-form">
-          <CardHeader><CardTitle className="flex items-center gap-2"><BedDouble className="h-5 w-5" /> Create Bed</CardTitle></CardHeader>
-          <CardContent>
-            <form onSubmit={submit} className="space-y-4">
-              <div className="grid gap-3 sm:grid-cols-3">
-                <Input placeholder="Floor" value={form.floor} onChange={(e) => setForm({ ...form, floor: e.target.value })} required />
-                <Input placeholder="Room" value={form.roomNumber} onChange={(e) => setForm({ ...form, roomNumber: e.target.value })} required />
-                <Input placeholder="Bed" value={form.bedNumber} onChange={(e) => setForm({ ...form, bedNumber: e.target.value })} required />
+      <AdminPageLayout>
+        <AdminFormCard id="admin-room-form" title="Create Bed" icon={BedDouble}>
+          <form onSubmit={submit}>
+            <AdminFormField>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                <Input className="h-11 w-full" placeholder="Floor" value={form.floor} onChange={(e) => setForm({ ...form, floor: e.target.value })} required />
+                <Input className="h-11 w-full" placeholder="Room" value={form.roomNumber} onChange={(e) => setForm({ ...form, roomNumber: e.target.value })} required />
+                <Input className="h-11 w-full" placeholder="Bed" value={form.bedNumber} onChange={(e) => setForm({ ...form, bedNumber: e.target.value })} required />
               </div>
-              <Input placeholder="Room Type" value={form.roomType} onChange={(e) => setForm({ ...form, roomType: e.target.value })} />
-              <Input placeholder="Sharing Details" value={form.sharingDetails} onChange={(e) => setForm({ ...form, sharingDetails: e.target.value })} />
-              <Input type="number" placeholder="Rent" value={form.rent} onChange={(e) => setForm({ ...form, rent: e.target.value })} />
-              <Input placeholder="Amenities comma separated" value={form.amenities} onChange={(e) => setForm({ ...form, amenities: e.target.value })} />
-              {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button type="submit" className="w-full">Create Room / Bed</Button>
-            </form>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>Property → Floor → Room → Bed</CardTitle></CardHeader>
-          <CardContent>
-            <DataTable
-              columns={[
-                { key: 'hierarchy', label: 'Hierarchy' },
-                { key: 'tenant', label: 'Tenant' },
-                { key: 'roomType', label: 'Type' },
-                { key: 'rent', label: 'Rent' },
-                { key: 'status', label: 'Status', badge: true },
-                { key: 'actions', label: 'Actions' }
-              ]}
-              rows={rows}
-            />
-          </CardContent>
-        </Card>
-      </div>
+              <Input className="h-11" placeholder="Room Type" value={form.roomType} onChange={(e) => setForm({ ...form, roomType: e.target.value })} />
+              <Input className="h-11" placeholder="Sharing Details" value={form.sharingDetails} onChange={(e) => setForm({ ...form, sharingDetails: e.target.value })} />
+              <Input className="h-11" type="number" placeholder="Rent" value={form.rent} onChange={(e) => setForm({ ...form, rent: e.target.value })} />
+              <Input className="h-11" placeholder="Amenities comma separated" value={form.amenities} onChange={(e) => setForm({ ...form, amenities: e.target.value })} />
+              {message ? <p className="break-words rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
+              <Button type="submit" className="h-11 w-full">Create Room / Bed</Button>
+            </AdminFormField>
+          </form>
+        </AdminFormCard>
+        <AdminTableSection title="Property → Floor → Room → Bed">
+          <DataTable
+            embedded
+            columns={[
+              { key: 'hierarchy', label: 'Hierarchy', mobilePrimary: true },
+              { key: 'tenant', label: 'Tenant' },
+              { key: 'roomType', label: 'Type' },
+              { key: 'rent', label: 'Rent' },
+              { key: 'status', label: 'Status', badge: true },
+              { key: 'actions', label: 'Actions' }
+            ]}
+            rows={rows}
+          />
+        </AdminTableSection>
+      </AdminPageLayout>
     </>
   );
 }

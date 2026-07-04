@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { DataTable } from '../../components/shared/DataTable';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { AdminModuleHeader, adminStatusVariant } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, adminStatusVariant } from './adminUi';
 
 const initialForm = { name: '', mobile: '', role: 'staff', salary: '' };
 
@@ -84,40 +83,37 @@ export function StaffManagementPage() {
         actionLabel="Add Staff"
         onAction={() => document.getElementById('admin-staff-form')?.scrollIntoView({ behavior: 'smooth' })}
       />
-      <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-        <Card id="admin-staff-form">
-          <CardHeader><CardTitle>Add Staff</CardTitle></CardHeader>
-          <CardContent>
-            <form onSubmit={submit} className="space-y-4">
-              <Input placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
-              <Input placeholder="Mobile" value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value })} />
+      <AdminPageLayout>
+        <AdminFormCard id="admin-staff-form" title="Add Staff">
+          <form onSubmit={submit}>
+            <AdminFormField>
+              <Input className="h-11" placeholder="Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
+              <Input className="h-11" placeholder="Mobile" value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value })} />
               <select className="h-11 w-full rounded-xl border bg-background px-4 text-sm" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
                 {['caretaker', 'security', 'cleaner', 'cook', 'electrician', 'plumber', 'staff'].map((role) => <option key={role} value={role}>{role}</option>)}
               </select>
-              <Input type="number" placeholder="Salary" value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} />
-              {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button type="submit" className="w-full">Create Staff</Button>
-            </form>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>Attendance, Salary & Tasks</CardTitle></CardHeader>
-          <CardContent>
-            <DataTable
-              columns={[
-                { key: 'name', label: 'Name' },
-                { key: 'mobile', label: 'Mobile' },
-                { key: 'role', label: 'Role' },
-                { key: 'salary', label: 'Salary' },
-                { key: 'task', label: 'Task' },
-                { key: 'status', label: 'Status', badge: true },
-                { key: 'actions', label: 'Actions' }
-              ]}
-              rows={rows}
-            />
-          </CardContent>
-        </Card>
-      </div>
+              <Input className="h-11" type="number" placeholder="Salary" value={form.salary} onChange={(e) => setForm({ ...form, salary: e.target.value })} />
+              {message ? <p className="break-words rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
+              <Button type="submit" className="h-11 w-full">Create Staff</Button>
+            </AdminFormField>
+          </form>
+        </AdminFormCard>
+        <AdminTableSection title="Attendance, Salary & Tasks">
+          <DataTable
+            embedded
+            columns={[
+              { key: 'name', label: 'Name', mobilePrimary: true },
+              { key: 'mobile', label: 'Mobile' },
+              { key: 'role', label: 'Role' },
+              { key: 'salary', label: 'Salary' },
+              { key: 'task', label: 'Task' },
+              { key: 'status', label: 'Status', badge: true },
+              { key: 'actions', label: 'Actions' }
+            ]}
+            rows={rows}
+          />
+        </AdminTableSection>
+      </AdminPageLayout>
     </>
   );
 }

@@ -1,15 +1,14 @@
 import { useState } from 'react';
+import { ReceiptIndianRupee, Send, WalletCards } from 'lucide-react';
 import { DataTable } from '../../components/shared/DataTable';
 import { StatCard } from '../../components/shared/StatCard';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { AdminModuleHeader, adminStatusVariant, formatDate } from './adminUi';
-import { ReceiptIndianRupee, Send, WalletCards } from 'lucide-react';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, adminStatusVariant, formatDate } from './adminUi';
 
 const initialForm = { tenantId: '', month: '', amount: '', dueDate: '', lateFees: 0 };
 
@@ -86,43 +85,40 @@ export function RentManagementPage() {
         actionLabel="Generate Rent"
         onAction={() => document.getElementById('admin-rent-form')?.scrollIntoView({ behavior: 'smooth' })}
       />
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid min-w-0 max-w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         <StatCard label="Total Collection" value={formatCurrency(totalCollection)} icon={ReceiptIndianRupee} tone="success" />
         <StatCard label="Pending Collection" value={formatCurrency(pendingCollection)} icon={WalletCards} tone="warning" />
         <StatCard label="Overdue Rent" value={formatCurrency(overdue)} icon={Send} tone="danger" />
       </div>
-      <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-        <Card id="admin-rent-form">
-          <CardHeader><CardTitle>Generate Rent</CardTitle></CardHeader>
-          <CardContent>
-            <form onSubmit={submit} className="space-y-4">
-              <Input placeholder="Tenant ID" value={form.tenantId} onChange={(e) => setForm({ ...form, tenantId: e.target.value })} required />
-              <Input placeholder="Month e.g. July 2026" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} required />
-              <Input type="number" placeholder="Amount" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
-              <Input type="date" value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} />
-              {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button type="submit" className="w-full">Generate Rent</Button>
-            </form>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>Rent Records</CardTitle></CardHeader>
-          <CardContent>
-            <DataTable
-              columns={[
-                { key: 'tenant', label: 'Tenant' },
-                { key: 'room', label: 'Room' },
-                { key: 'month', label: 'Month' },
-                { key: 'amount', label: 'Amount' },
-                { key: 'dueDate', label: 'Due Date' },
-                { key: 'status', label: 'Status', badge: true },
-                { key: 'actions', label: 'Actions' }
-              ]}
-              rows={rows}
-            />
-          </CardContent>
-        </Card>
-      </div>
+      <AdminPageLayout className="mt-4 sm:mt-6">
+        <AdminFormCard id="admin-rent-form" title="Generate Rent">
+          <form onSubmit={submit}>
+            <AdminFormField>
+              <Input className="h-11" placeholder="Tenant ID" value={form.tenantId} onChange={(e) => setForm({ ...form, tenantId: e.target.value })} required />
+              <Input className="h-11" placeholder="Month e.g. July 2026" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} required />
+              <Input className="h-11" type="number" placeholder="Amount" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
+              <Input className="h-11 w-full" type="date" value={form.dueDate} onChange={(e) => setForm({ ...form, dueDate: e.target.value })} />
+              {message ? <p className="break-words rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
+              <Button type="submit" className="h-11 w-full">Generate Rent</Button>
+            </AdminFormField>
+          </form>
+        </AdminFormCard>
+        <AdminTableSection title="Rent Records">
+          <DataTable
+            embedded
+            columns={[
+              { key: 'tenant', label: 'Tenant', mobilePrimary: true },
+              { key: 'room', label: 'Room' },
+              { key: 'month', label: 'Month' },
+              { key: 'amount', label: 'Amount' },
+              { key: 'dueDate', label: 'Due Date' },
+              { key: 'status', label: 'Status', badge: true },
+              { key: 'actions', label: 'Actions' }
+            ]}
+            rows={rows}
+          />
+        </AdminTableSection>
+      </AdminPageLayout>
     </>
   );
 }

@@ -47,7 +47,6 @@
   }
 
   html {
-    overflow-x: hidden;
     -webkit-text-size-adjust: 100%;
   }
 
@@ -57,8 +56,28 @@
     font-family: Inter, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
     min-height: 100dvh;
+  }
+
+  #root {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .mobile-action-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .mobile-action-stack > .flex {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .mobile-action-stack button {
+    min-height: 2.75rem;
+    width: 100%;
   }
 
   .safe-top {

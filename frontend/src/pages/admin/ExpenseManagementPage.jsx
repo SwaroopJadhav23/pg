@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { DataTable } from '../../components/shared/DataTable';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { AdminModuleHeader, adminStatusVariant, formatDate } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, adminStatusVariant, formatDate } from './adminUi';
 
 const initialForm = { category: 'electricity', title: '', amount: '', expenseDate: '', billUrl: '', notes: '' };
 
@@ -67,41 +66,38 @@ export function ExpenseManagementPage() {
         actionLabel="Add Expense"
         onAction={() => document.getElementById('admin-expense-form')?.scrollIntoView({ behavior: 'smooth' })}
       />
-      <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-        <Card id="admin-expense-form">
-          <CardHeader><CardTitle>Add Expense</CardTitle></CardHeader>
-          <CardContent>
-            <form onSubmit={submit} className="space-y-4">
+      <AdminPageLayout>
+        <AdminFormCard id="admin-expense-form" title="Add Expense">
+          <form onSubmit={submit}>
+            <AdminFormField>
               <select className="h-11 w-full rounded-xl border bg-background px-4 text-sm" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
                 {['electricity', 'water', 'internet', 'maintenance', 'staff_salary', 'food', 'miscellaneous'].map((item) => <option key={item} value={item}>{item.replaceAll('_', ' ')}</option>)}
               </select>
-              <Input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
-              <Input type="number" placeholder="Amount" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
-              <Input type="date" value={form.expenseDate} onChange={(e) => setForm({ ...form, expenseDate: e.target.value })} />
-              <Input placeholder="Bill URL" value={form.billUrl} onChange={(e) => setForm({ ...form, billUrl: e.target.value })} />
-              <Textarea placeholder="Notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
-              {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button type="submit" className="w-full">Add Expense</Button>
-            </form>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>Expense Reports</CardTitle></CardHeader>
-          <CardContent>
-            <DataTable
-              columns={[
-                { key: 'title', label: 'Expense' },
-                { key: 'category', label: 'Category' },
-                { key: 'amount', label: 'Amount' },
-                { key: 'date', label: 'Date' },
-                { key: 'status', label: 'Status', badge: true },
-                { key: 'actions', label: 'Actions' }
-              ]}
-              rows={rows}
-            />
-          </CardContent>
-        </Card>
-      </div>
+              <Input className="h-11" placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
+              <Input className="h-11" type="number" placeholder="Amount" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
+              <Input className="h-11 w-full" type="date" value={form.expenseDate} onChange={(e) => setForm({ ...form, expenseDate: e.target.value })} />
+              <Input className="h-11" placeholder="Bill URL" value={form.billUrl} onChange={(e) => setForm({ ...form, billUrl: e.target.value })} />
+              <Textarea className="min-h-[6rem] w-full" placeholder="Notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+              {message ? <p className="break-words rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
+              <Button type="submit" className="h-11 w-full">Add Expense</Button>
+            </AdminFormField>
+          </form>
+        </AdminFormCard>
+        <AdminTableSection title="Expense Reports">
+          <DataTable
+            embedded
+            columns={[
+              { key: 'title', label: 'Expense', mobilePrimary: true },
+              { key: 'category', label: 'Category' },
+              { key: 'amount', label: 'Amount' },
+              { key: 'date', label: 'Date' },
+              { key: 'status', label: 'Status', badge: true },
+              { key: 'actions', label: 'Actions' }
+            ]}
+            rows={rows}
+          />
+        </AdminTableSection>
+      </AdminPageLayout>
     </>
   );
 }

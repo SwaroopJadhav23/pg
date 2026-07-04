@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { DataTable } from '../../components/shared/DataTable';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { adminService } from '../../services/adminService';
-import { AdminModuleHeader, formatDate } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, formatDate } from './adminUi';
 
 const initialForm = { title: '', body: '', audience: 'all_tenants', floor: '', roomNumber: '', scheduledAt: '' };
 
@@ -46,31 +45,38 @@ export function NoticeManagementPage() {
         actionLabel="Create Notice"
         onAction={() => document.getElementById('admin-notice-form')?.scrollIntoView({ behavior: 'smooth' })}
       />
-      <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
-        <Card id="admin-notice-form">
-          <CardHeader><CardTitle>Create Notice</CardTitle></CardHeader>
-          <CardContent>
-            <form onSubmit={submit} className="space-y-4">
-              <Input placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
-              <Textarea placeholder="Notice content" value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} required />
+      <AdminPageLayout>
+        <AdminFormCard id="admin-notice-form" title="Create Notice">
+          <form onSubmit={submit}>
+            <AdminFormField>
+              <Input className="h-11" placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} required />
+              <Textarea className="min-h-[8rem] w-full" placeholder="Notice content" value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} required />
               <select className="h-11 w-full rounded-xl border bg-background px-4 text-sm" value={form.audience} onChange={(e) => setForm({ ...form, audience: e.target.value })}>
                 {['all_tenants', 'floor', 'room'].map((audience) => <option key={audience} value={audience}>{audience.replaceAll('_', ' ')}</option>)}
               </select>
-              <div className="grid gap-3 sm:grid-cols-2">
-                <Input placeholder="Floor" value={form.floor} onChange={(e) => setForm({ ...form, floor: e.target.value })} />
-                <Input placeholder="Room" value={form.roomNumber} onChange={(e) => setForm({ ...form, roomNumber: e.target.value })} />
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                <Input className="h-11" placeholder="Floor" value={form.floor} onChange={(e) => setForm({ ...form, floor: e.target.value })} />
+                <Input className="h-11" placeholder="Room" value={form.roomNumber} onChange={(e) => setForm({ ...form, roomNumber: e.target.value })} />
               </div>
-              <Input type="datetime-local" value={form.scheduledAt} onChange={(e) => setForm({ ...form, scheduledAt: e.target.value })} />
-              {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button type="submit" className="w-full">Create Notice</Button>
-            </form>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader><CardTitle>Notice History</CardTitle></CardHeader>
-          <CardContent><DataTable columns={[{ key: 'title', label: 'Title' }, { key: 'audience', label: 'Audience' }, { key: 'schedule', label: 'Schedule' }, { key: 'created', label: 'Created' }]} rows={rows} /></CardContent>
-        </Card>
-      </div>
+              <Input className="h-11 w-full" type="datetime-local" value={form.scheduledAt} onChange={(e) => setForm({ ...form, scheduledAt: e.target.value })} />
+              {message ? <p className="break-words rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
+              <Button type="submit" className="h-11 w-full">Create Notice</Button>
+            </AdminFormField>
+          </form>
+        </AdminFormCard>
+        <AdminTableSection title="Notice History">
+          <DataTable
+            embedded
+            columns={[
+              { key: 'title', label: 'Title', mobilePrimary: true },
+              { key: 'audience', label: 'Audience' },
+              { key: 'schedule', label: 'Schedule' },
+              { key: 'created', label: 'Created' }
+            ]}
+            rows={rows}
+          />
+        </AdminTableSection>
+      </AdminPageLayout>
     </>
   );
 }
