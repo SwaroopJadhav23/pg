@@ -21,7 +21,15 @@ const publicDir = path.join(__dirname, '../public');
 export const app = express();
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(cors({ origin: env.clientOrigins, credentials: true }));
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (env.clientOrigins.includes(origin)) return callback(null, true);
+    if (/^https:\/\/[\w.-]+\.vercel\.app$/.test(origin)) return callback(null, true);
+    callback(null, false);
+  },
+  credentials: true
+}));
 app.use(express.json({ limit: '2mb' }));
 app.use(requestContext);
 app.use(morgan('dev'));
