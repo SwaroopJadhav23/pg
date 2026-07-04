@@ -9,6 +9,9 @@
     "seed": "node src/utils/seedDemoData.js",
     "clear-demo": "node src/utils/clearSeedData.js"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "bcryptjs": "latest",
     "cors": "latest",
