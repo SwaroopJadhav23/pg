@@ -7,7 +7,7 @@ import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, adminStatusVariant } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminPageShell, AdminTableSection, adminStatusVariant } from './adminUi';
 
 const initialForm = { floor: '', roomNumber: '', bedNumber: '', roomType: '', sharingDetails: '', rent: '', status: 'vacant', amenities: '' };
 
@@ -81,7 +81,7 @@ export function RoomManagementPage() {
   }));
 
   return (
-    <>
+    <AdminPageShell>
       <AdminModuleHeader
         title="Room Management"
         description="Create floors, rooms and beds, assign tenants, transfer tenants and vacate beds."
@@ -121,6 +121,6 @@ export function RoomManagementPage() {
           />
         </AdminTableSection>
       </AdminPageLayout>
-    </>
+    </AdminPageShell>
   );
 }

@@ -8,7 +8,7 @@ import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, adminStatusVariant, formatDate } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminPageShell, AdminTableSection, adminStatusVariant, formatDate } from './adminUi';
 
 const initialForm = { tenantId: '', month: '', amount: '', dueDate: '', lateFees: 0 };
 
@@ -78,14 +78,14 @@ export function RentManagementPage() {
   }));
 
   return (
-    <>
+    <AdminPageShell>
       <AdminModuleHeader
         title="Rent Management"
         description="Generate rent, mark paid, generate receipts and send reminders."
         actionLabel="Generate Rent"
         onAction={() => document.getElementById('admin-rent-form')?.scrollIntoView({ behavior: 'smooth' })}
       />
-      <div className="grid min-w-0 max-w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+      <div className="admin-page-grid grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
         <StatCard label="Total Collection" value={formatCurrency(totalCollection)} icon={ReceiptIndianRupee} tone="success" />
         <StatCard label="Pending Collection" value={formatCurrency(pendingCollection)} icon={WalletCards} tone="warning" />
         <StatCard label="Overdue Rent" value={formatCurrency(overdue)} icon={Send} tone="danger" />
@@ -119,6 +119,6 @@ export function RentManagementPage() {
           />
         </AdminTableSection>
       </AdminPageLayout>
-    </>
+    </AdminPageShell>
   );
 }

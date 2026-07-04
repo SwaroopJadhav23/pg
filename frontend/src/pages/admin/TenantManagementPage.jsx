@@ -6,7 +6,7 @@ import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { resolveImageUrl } from '../../pages/landing/utils/resolveImageUrl';
 import { adminService } from '../../services/adminService';
-import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, adminStatusVariant } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminPageShell, AdminTableSection, adminStatusVariant } from './adminUi';
 import { TenantPhotoField } from './components/TenantPhotoField';
 
 const initialForm = { name: '', email: '', mobile: '', profile: { guardianName: '', emergencyContact: '', aadhaar: '', pan: '', photoUrl: '' } };
@@ -88,7 +88,7 @@ export function TenantManagementPage() {
   }));
 
   return (
-    <>
+    <AdminPageShell>
       <AdminModuleHeader
         title="Tenant Management"
         description="Add, edit, delete and view tenant profiles with guardian, emergency and KYC details."
@@ -135,6 +135,6 @@ export function TenantManagementPage() {
           />
         </AdminTableSection>
       </AdminPageLayout>
-    </>
+    </AdminPageShell>
   );
 }

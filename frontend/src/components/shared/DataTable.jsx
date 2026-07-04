@@ -124,7 +124,7 @@ export function DataTable({
 
   const body = loading ? <TableSkeleton columns={columns.length} /> : (
     <>
-      <div className="space-y-3 p-3 md:hidden">
+      <div className="space-y-3 p-3 lg:hidden">
         {visibleRows.map((row) => (
           <MobileRowCard key={row.id} row={row} columns={columns} />
         ))}
@@ -133,8 +133,8 @@ export function DataTable({
         ) : null}
       </div>
 
-      <div className="hidden min-w-0 md:block">
-        <div className="overflow-x-auto">
+      <div className="hidden min-w-0 max-w-full lg:block">
+        <div className="max-w-full overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead className="bg-slate-50 text-xs uppercase text-muted-foreground dark:bg-slate-900/60">
               <tr>{columns.map((column) => <th key={column.key} className="whitespace-nowrap px-4 py-4 font-bold lg:px-5">{column.label}</th>)}</tr>

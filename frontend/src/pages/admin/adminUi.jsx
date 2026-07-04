@@ -35,7 +35,15 @@ export function AdminModuleHeader({ title, description, actionLabel, onAction })
 
 export function AdminPageLayout({ children, className = '' }) {
   return (
-    <div className={`grid min-w-0 max-w-full grid-cols-1 gap-4 sm:gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] ${className}`.trim()}>
+    <div className={`admin-page-grid grid min-w-0 max-w-full grid-cols-1 gap-4 sm:gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] ${className}`.trim()}>
+      {children}
+    </div>
+  );
+}
+
+export function AdminPageShell({ children }) {
+  return (
+    <div className="portal-page flex w-full min-w-0 max-w-full flex-col gap-4 sm:gap-5">
       {children}
     </div>
   );

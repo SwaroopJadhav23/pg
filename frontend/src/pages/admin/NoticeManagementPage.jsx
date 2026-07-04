@@ -6,7 +6,7 @@ import { Textarea } from '../../components/ui/textarea';
 import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { adminService } from '../../services/adminService';
-import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, formatDate } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminPageShell, AdminTableSection, formatDate } from './adminUi';
 
 const initialForm = { title: '', body: '', audience: 'all_tenants', floor: '', roomNumber: '', scheduledAt: '' };
 
@@ -38,7 +38,7 @@ export function NoticeManagementPage() {
   }));
 
   return (
-    <>
+    <AdminPageShell>
       <AdminModuleHeader
         title="Notice Management"
         description="Create, schedule and send notices to all tenants, specific floors or specific rooms."
@@ -77,6 +77,6 @@ export function NoticeManagementPage() {
           />
         </AdminTableSection>
       </AdminPageLayout>
-    </>
+    </AdminPageShell>
   );
 }

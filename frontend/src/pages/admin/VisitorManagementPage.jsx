@@ -1,10 +1,9 @@
 import { DataTable } from '../../components/shared/DataTable';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { adminService } from '../../services/adminService';
-import { AdminModuleHeader, adminStatusVariant, formatDate } from './adminUi';
+import { AdminModuleHeader, AdminPageShell, AdminTableSection, adminStatusVariant, formatDate } from './adminUi';
 
 export function VisitorManagementPage() {
   const { data, setData } = useResource(adminService.visitors, { visitors: [] });
@@ -68,7 +67,7 @@ export function VisitorManagementPage() {
   }));
 
   return (
-    <>
+    <AdminPageShell>
       <AdminModuleHeader
         title="Visitor Management"
         description="Record visitor entries, check-in/check-out visitors and generate visitor passes."
@@ -82,23 +81,21 @@ export function VisitorManagementPage() {
           generatePass(visitor);
         }}
       />
-      <Card>
-        <CardHeader><CardTitle>Visitor Entry Register</CardTitle></CardHeader>
-        <CardContent>
-          <DataTable
-            columns={[
-              { key: 'visitor', label: 'Visitor' },
-              { key: 'mobile', label: 'Mobile' },
-              { key: 'tenant', label: 'Tenant' },
-              { key: 'relation', label: 'Relation' },
-              { key: 'checkIn', label: 'Check-In' },
-              { key: 'status', label: 'Status', badge: true },
-              { key: 'actions', label: 'Actions' }
-            ]}
-            rows={rows}
-          />
-        </CardContent>
-      </Card>
-    </>
+      <AdminTableSection title="Visitor Entry Register">
+        <DataTable
+          embedded
+          columns={[
+            { key: 'visitor', label: 'Visitor', mobilePrimary: true },
+            { key: 'mobile', label: 'Mobile' },
+            { key: 'tenant', label: 'Tenant' },
+            { key: 'relation', label: 'Relation' },
+            { key: 'checkIn', label: 'Check-In' },
+            { key: 'status', label: 'Status', badge: true },
+            { key: 'actions', label: 'Actions' }
+          ]}
+          rows={rows}
+        />
+      </AdminTableSection>
+    </AdminPageShell>
   );
 }

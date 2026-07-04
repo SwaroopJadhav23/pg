@@ -71,7 +71,7 @@ export function TenantPhotoField({ previewUrl, onPhotoChange, onClear }) {
   }
 
   return (
-    <div className="space-y-3 rounded-2xl border bg-slate-50 p-4 dark:bg-slate-900/40">
+    <div className="min-w-0 w-full max-w-full overflow-hidden rounded-2xl border bg-slate-50 p-3 dark:bg-slate-900/40 sm:p-4">
       <p className="text-sm font-semibold text-foreground">Tenant Photo</p>
       {previewUrl ? (
         <div className="relative mx-auto w-fit">
@@ -106,7 +106,7 @@ export function TenantPhotoField({ previewUrl, onPhotoChange, onClear }) {
         <video ref={videoRef} autoPlay playsInline muted className="w-full rounded-2xl border bg-black" />
       ) : null}
       {cameraError ? <p className="text-xs text-rose-600">{cameraError}</p> : null}
-      <p className="text-xs text-muted-foreground">Upload an image or capture a photo with your camera. Max size 5 MB.</p>
+      <p className="break-words text-xs text-muted-foreground">Upload an image or capture a photo with your camera. Max size 5 MB.</p>
     </div>
   );
 }

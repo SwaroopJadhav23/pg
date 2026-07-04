@@ -2,7 +2,6 @@ import { BedDouble, ClipboardList, ReceiptIndianRupee, UserRoundCheck, Users, Wa
 import { useNavigate } from 'react-router-dom';
 import { ChartCard } from '../../components/shared/ChartCard';
 import { DataTable } from '../../components/shared/DataTable';
-import { PageHeader } from '../../components/shared/PageHeader';
 import { StatCard } from '../../components/shared/StatCard';
 import { Button } from '../../components/ui/button';
 import { useAuth } from '../../auth/AuthContext';
@@ -10,7 +9,7 @@ import { emptyAdminDashboard } from '../../config/emptyStates';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { adminStatusVariant } from './adminUi';
+import { AdminModuleHeader, AdminPageShell, AdminTableSection, adminStatusVariant } from './adminUi';
 
 export function AdminDashboard() {
   const navigate = useNavigate();
@@ -38,15 +37,14 @@ export function AdminDashboard() {
   const expenseChart = (data.expensesByCategory || []).map((item) => ({ name: item._id?.replaceAll('_', ' ') || 'Expense', value: item.total || 0 }));
 
   return (
-    <>
-      <PageHeader
-        eyebrow="Admin Portal"
+    <AdminPageShell>
+      <AdminModuleHeader
         title="Single Property Command Center"
         description={`Manage tenants, rooms, rent collection, expenses, complaints, visitors, staff and notices${user?.name ? ` for ${user.name}` : ''}.`}
         actionLabel="Add Tenant"
         onAction={() => navigate('/admin/tenants')}
       />
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="admin-page-grid grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         <StatCard label="Total Tenants" value={stats.totalTenants} icon={Users} delta="Single property" />
         <StatCard label="Occupied Beds" value={stats.occupiedBeds} icon={BedDouble} tone="success" delta={`${stats.vacantBeds} vacant`} />
         <StatCard label="Monthly Revenue" value={formatCurrency(stats.monthlyRevenue || 0)} icon={ReceiptIndianRupee} tone="success" />
@@ -54,20 +52,23 @@ export function AdminDashboard() {
         <StatCard label="Open Complaints" value={stats.openComplaints} icon={ClipboardList} tone="warning" />
         <StatCard label="Total Visitors" value={stats.totalVisitors} icon={UserRoundCheck} />
       </div>
-      <div className="grid gap-6 xl:grid-cols-2">
+      <div className="admin-page-grid grid min-w-0 grid-cols-1 gap-4 lg:grid-cols-2">
         <ChartCard title="Expense Breakdown" description="Category wise operating cost" data={expenseChart} />
         <ChartCard title="Occupancy Overview" description="Occupied, vacant and operational workload" data={occupancyChart} type="bar" />
       </div>
-      <DataTable
-        columns={[
-          { key: 'tenant', label: 'Tenant' },
-          { key: 'room', label: 'Room' },
-          { key: 'amount', label: 'Rent' },
-          { key: 'status', label: 'Status', badge: true },
-          { key: 'actions', label: 'Actions' }
-        ]}
-        rows={rentRows}
-      />
-    </>
+      <AdminTableSection title="Recent Rent Records">
+        <DataTable
+          embedded
+          columns={[
+            { key: 'tenant', label: 'Tenant', mobilePrimary: true },
+            { key: 'room', label: 'Room' },
+            { key: 'amount', label: 'Rent' },
+            { key: 'status', label: 'Status', badge: true },
+            { key: 'actions', label: 'Actions' }
+          ]}
+          rows={rentRows}
+        />
+      </AdminTableSection>
+    </AdminPageShell>
   );
 }

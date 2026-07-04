@@ -6,7 +6,7 @@ import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, adminStatusVariant } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminPageShell, AdminTableSection, adminStatusVariant } from './adminUi';
 
 const initialForm = { name: '', mobile: '', role: 'staff', salary: '' };
 
@@ -76,7 +76,7 @@ export function StaffManagementPage() {
   }));
 
   return (
-    <>
+    <AdminPageShell>
       <AdminModuleHeader
         title="Staff Management"
         description="Manage caretakers, security, cleaners and cooks with attendance, salary and task assignment."
@@ -114,6 +114,6 @@ export function StaffManagementPage() {
           />
         </AdminTableSection>
       </AdminPageLayout>
-    </>
+    </AdminPageShell>
   );
 }

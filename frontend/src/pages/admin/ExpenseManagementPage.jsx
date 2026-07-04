@@ -7,7 +7,7 @@ import { emitToast } from '../../components/ui/toast';
 import { useResource } from '../../hooks/useResource';
 import { formatCurrency } from '../../lib/utils';
 import { adminService } from '../../services/adminService';
-import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminTableSection, adminStatusVariant, formatDate } from './adminUi';
+import { AdminFormCard, AdminFormField, AdminModuleHeader, AdminPageLayout, AdminPageShell, AdminTableSection, adminStatusVariant, formatDate } from './adminUi';
 
 const initialForm = { category: 'electricity', title: '', amount: '', expenseDate: '', billUrl: '', notes: '' };
 
@@ -59,7 +59,7 @@ export function ExpenseManagementPage() {
   }));
 
   return (
-    <>
+    <AdminPageShell>
       <AdminModuleHeader
         title="Expense Management"
         description="Add expenses, upload bills, approve expenses and generate expense reports."
@@ -98,6 +98,6 @@ export function ExpenseManagementPage() {
           />
         </AdminTableSection>
       </AdminPageLayout>
-    </>
+    </AdminPageShell>
   );
 }
