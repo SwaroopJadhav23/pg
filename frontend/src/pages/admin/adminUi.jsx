@@ -16,10 +16,10 @@ export function formatDate(value) {
 
 export function AdminModuleHeader({ title, description, actionLabel, onAction }) {
   return (
-    <div className="min-w-0 max-w-full gradient-panel rounded-2xl border p-4 shadow-soft sm:rounded-[2rem] sm:p-6">
+    <div className="gradient-panel min-w-0 max-w-full overflow-visible rounded-2xl border p-4 shadow-soft sm:rounded-[2rem] sm:p-6 lg:px-8">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary sm:text-sm">Admin Portal</p>
+        <div className="min-w-0 flex-1 pl-0.5">
+          <p className="text-xs font-bold uppercase tracking-[0.15em] text-primary sm:text-sm">Admin Portal</p>
           <h1 className="mt-2 break-words text-2xl font-extrabold tracking-tight sm:text-3xl md:text-4xl">{title}</h1>
           <p className="mt-2 max-w-3xl break-words text-sm text-muted-foreground sm:text-base">{description}</p>
         </div>
@@ -43,7 +43,7 @@ export function AdminPageLayout({ children, className = '' }) {
 
 export function AdminPageShell({ children }) {
   return (
-    <div className="portal-page flex w-full min-w-0 max-w-full flex-col gap-4 sm:gap-5">
+    <div className="portal-page flex w-full min-w-0 max-w-full flex-col gap-4 overflow-visible sm:gap-5">
       {children}
     </div>
   );

@@ -1,5 +1,7 @@
 import { Badge } from '../../components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
+import { emitToast } from '../../components/ui/toast';
+import { resolveImageUrl } from '../landing/utils/resolveImageUrl';
 
 export function statusVariant(status) {
   if (['paid', 'resolved', 'approved', 'checked_out', 'success'].includes(status)) return 'success';
@@ -16,6 +18,68 @@ export function formatDate(value) {
 export function formatBytes(value = 0) {
   if (!value) return '0 KB';
   return `${Math.max(1, Math.round(value / 1024))} KB`;
+}
+
+export function documentFileUrl(document) {
+  return resolveImageUrl(document?.fileUrl);
+}
+
+export function previewDocument(document) {
+  const url = documentFileUrl(document);
+  if (!url) {
+    emitToast({ title: 'Preview unavailable', description: 'This document has no file attached.', variant: 'destructive' });
+    return;
+  }
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+export function downloadDocument(document) {
+  const url = documentFileUrl(document);
+  if (!url) {
+    emitToast({ title: 'Download unavailable', description: 'This document has no file attached.', variant: 'destructive' });
+    return;
+  }
+  const anchor = globalThis.document.createElement('a');
+  anchor.href = url;
+  anchor.download = document.title || 'document';
+  anchor.target = '_blank';
+  anchor.rel = 'noopener noreferrer';
+  globalThis.document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+}
+
+export async function shareDocument(document) {
+  const url = documentFileUrl(document);
+  if (!url) {
+    emitToast({ title: 'Share unavailable', description: 'This document has no file attached.', variant: 'destructive' });
+    return;
+  }
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: document.title, text: document.title, url });
+      return;
+    } catch {
+      // User cancelled or share failed — fall back to copy.
+    }
+  }
+  await navigator.clipboard.writeText(url);
+  emitToast({ title: 'Link copied', description: 'Document link copied to clipboard.' });
+}
+
+export function openWhatsAppSupport({ name, propertyName, phone }) {
+  const digits = String(phone || '').replace(/\D/g, '');
+  if (digits.length < 10) {
+    emitToast({
+      title: 'WhatsApp unavailable',
+      description: 'No contact number on your profile. Submit a support ticket instead.',
+      variant: 'destructive'
+    });
+    return;
+  }
+  const normalized = digits.length === 10 ? `91${digits}` : digits;
+  const text = encodeURIComponent(`Hello, I am ${name || 'a tenant'}. I need help from ${propertyName || 'my PG'}.`);
+  window.open(`https://wa.me/${normalized}?text=${text}`, '_blank', 'noopener,noreferrer');
 }
 
 export function EmptyState({ title, description }) {

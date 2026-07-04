@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { TENANT_DEFAULT_PASSWORD } from '../../constants/credentials.js';
 
 const optionalText = z.string().trim().optional().or(z.literal(''));
 const idParam = z.object({ params: z.object({ id: z.string().min(1) }) });
@@ -8,7 +9,8 @@ export const createTenantSchema = z.object({
     name: z.string().trim().min(2),
     email: z.string().trim().email(),
     mobile: optionalText,
-    password: z.string().min(8).default('Password@123'),
+    password: z.string().min(6).default(TENANT_DEFAULT_PASSWORD),
+    roomId: optionalText,
     profile: z.object({
       address: optionalText,
       guardianName: optionalText,
@@ -17,6 +19,7 @@ export const createTenantSchema = z.object({
       aadhaar: optionalText,
       pan: optionalText,
       photoUrl: optionalText,
+      floorNumber: optionalText,
       roomNumber: optionalText,
       bedNumber: optionalText,
       joiningDate: optionalText

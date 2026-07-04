@@ -8,14 +8,16 @@ import { Input } from '../../components/ui/input';
 import { Textarea } from '../../components/ui/textarea';
 import { useStudentResource } from '../../hooks/useStudentResource';
 import { studentService } from '../../services/studentService';
-import { formatDate, statusVariant } from './studentUi';
+import { formatDate, openWhatsAppSupport, statusVariant } from './studentUi';
 
 const initialForm = { subject: '', category: 'general', message: '', channel: 'portal' };
 
 export function SupportPage() {
   const { data, setData } = useStudentResource(studentService.support, { tickets: [] });
+  const { data: profileData } = useStudentResource(studentService.profile, { student: null });
   const [form, setForm] = useState(initialForm);
   const [message, setMessage] = useState('');
+  const student = profileData.student || {};
 
   async function submitTicket(event) {
     event.preventDefault();
@@ -30,6 +32,14 @@ export function SupportPage() {
     }
   }
 
+  function handleWhatsAppSupport() {
+    openWhatsAppSupport({
+      name: student.name,
+      propertyName: student.property?.name,
+      phone: student.profile?.emergencyContact || student.profile?.guardianMobile || student.mobile
+    });
+  }
+
   return (
     <>
       <PageHeader eyebrow="Support Center" title="Support" description="Raise support tickets, chat with caretaker and use WhatsApp support for quick help." />
@@ -38,15 +48,15 @@ export function SupportPage() {
           <CardHeader><CardTitle className="flex items-center gap-2"><LifeBuoy className="h-5 w-5" /> Raise Support Ticket</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={submitTicket} className="space-y-4">
-              <Input placeholder="Subject" value={form.subject} onChange={(event) => setForm({ ...form, subject: event.target.value })} />
+              <Input placeholder="Subject" value={form.subject} onChange={(event) => setForm({ ...form, subject: event.target.value })} required minLength={3} />
               <select className="h-11 w-full rounded-xl border bg-background px-4 text-sm" value={form.category} onChange={(event) => setForm({ ...form, category: event.target.value })}>
                 {['billing', 'room', 'complaint', 'document', 'visitor', 'general'].map((category) => <option key={category} value={category}>{category}</option>)}
               </select>
-              <Textarea placeholder="How can the caretaker help?" value={form.message} onChange={(event) => setForm({ ...form, message: event.target.value })} />
+              <Textarea placeholder="How can the caretaker help?" value={form.message} onChange={(event) => setForm({ ...form, message: event.target.value })} required minLength={10} />
               {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button className="w-full"><MessageCircle className="h-4 w-4" /> Submit Ticket</Button>
+              <Button type="submit" className="w-full"><MessageCircle className="h-4 w-4" /> Submit Ticket</Button>
             </form>
-            <Button variant="outline" className="mt-4 w-full">WhatsApp Support</Button>
+            <Button type="button" variant="outline" className="mt-4 w-full" onClick={handleWhatsAppSupport}>WhatsApp Support</Button>
           </CardContent>
         </Card>
         <div className="space-y-4">

@@ -44,10 +44,10 @@ export function ComplaintsPage() {
               <select className="h-11 w-full rounded-xl border bg-background px-4 text-sm" value={form.priority} onChange={(event) => setForm({ ...form, priority: event.target.value })}>
                 {['low', 'medium', 'high', 'urgent'].map((priority) => <option key={priority} value={priority}>{priority}</option>)}
               </select>
-              <Textarea placeholder="Describe the issue clearly" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} />
+              <Textarea placeholder="Describe the issue clearly (min 10 characters)" value={form.description} onChange={(event) => setForm({ ...form, description: event.target.value })} required minLength={10} />
               <Input placeholder="Photo URL (optional)" value={form.photoUrl} onChange={(event) => setForm({ ...form, photoUrl: event.target.value })} />
               {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button className="w-full"><ClipboardList className="h-4 w-4" /> Submit Complaint</Button>
+              <Button type="submit" className="w-full"><ClipboardList className="h-4 w-4" /> Submit Complaint</Button>
             </form>
           </CardContent>
         </Card>

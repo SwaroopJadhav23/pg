@@ -1,5 +1,6 @@
 import { User } from '../../models/User.js';
 import { AuditLog, Complaint, Expense, Notice, Rent, Room, Staff, Visitor } from '../../models/Operations.js';
+import { TENANT_DEFAULT_PASSWORD } from '../../constants/credentials.js';
 import { ROLES } from '../../constants/roles.js';
 import { created, success } from '../../utils/apiResponse.js';
 import { AppError } from '../../utils/AppError.js';
@@ -11,6 +12,29 @@ function propertyScope(req) {
 
 async function audit(req, action, entity, entityId, metadata = {}) {
   await AuditLog.create({ actor: req.user._id, action, entity, entityId: String(entityId || ''), metadata, ip: req.ip });
+}
+
+async function linkTenantToRoom(tenant, roomId, scope) {
+  const room = await Room.findOne({ _id: roomId, ...scope });
+  if (!room) throw new AppError('Selected bed not found', 404);
+  if (room.tenant || room.status === 'occupied') throw new AppError('Selected bed is already occupied', 409);
+
+  room.tenant = tenant._id;
+  room.status = 'occupied';
+  await room.save();
+
+  const profile = tenant.profile?.toObject?.() ?? tenant.profile ?? {};
+  tenant.profile = {
+    ...profile,
+    floorNumber: room.floor,
+    roomNumber: room.roomNumber,
+    bedNumber: room.bedNumber,
+    roomType: room.roomType,
+    sharingDetails: room.sharingDetails,
+    joiningDate: profile.joiningDate || new Date()
+  };
+  await tenant.save();
+  return room;
 }
 
 export async function dashboard(req, res) {
@@ -50,9 +74,24 @@ export async function dashboard(req, res) {
 }
 
 export async function createTenant(req, res) {
-  const tenant = await User.create({ ...req.body, role: ROLES.STUDENT, property: req.user.property });
-  await audit(req, 'tenant.created', 'User', tenant._id, { email: tenant.email });
-  created(res, { tenant: await User.findById(tenant._id).select('-password') }, 'Tenant created');
+  const { roomId, ...body } = req.body;
+  const tenant = await User.create({
+    ...body,
+    password: TENANT_DEFAULT_PASSWORD,
+    role: ROLES.STUDENT,
+    property: req.user.property
+  });
+
+  if (roomId) {
+    await linkTenantToRoom(tenant, roomId, propertyScope(req));
+    await audit(req, 'room.tenant_assigned', 'Room', roomId, { tenantId: tenant._id });
+  }
+
+  await audit(req, 'tenant.created', 'User', tenant._id, { email: tenant.email, roomId: roomId || null });
+  created(res, {
+    tenant: await User.findById(tenant._id).select('-password'),
+    login: { email: tenant.email, password: TENANT_DEFAULT_PASSWORD }
+  }, 'Tenant created');
 }
 
 export async function uploadTenantPhoto(req, res) {
@@ -108,12 +147,9 @@ export async function updateRoom(req, res) {
 export async function assignTenantToRoom(req, res) {
   const tenant = await User.findOne({ _id: req.body.tenantId, role: ROLES.STUDENT, ...propertyScope(req) });
   if (!tenant) throw new AppError('Tenant not found for this property', 404);
-  const room = await Room.findOneAndUpdate({ _id: req.params.id, ...propertyScope(req) }, { tenant: tenant._id, status: 'occupied' }, { new: true });
-  if (!room) throw new AppError('Room not found', 404);
-  tenant.profile = { ...tenant.profile, floorNumber: room.floor, roomNumber: room.roomNumber, bedNumber: room.bedNumber, roomType: room.roomType, sharingDetails: room.sharingDetails };
-  await tenant.save();
+  const room = await linkTenantToRoom(tenant, req.params.id, propertyScope(req));
   await audit(req, 'room.tenant_assigned', 'Room', room._id, { tenantId: tenant._id });
-  success(res, { room }, 'Tenant assigned to bed');
+  success(res, { room: await Room.findById(room._id).populate('tenant', 'name email mobile profile') }, 'Tenant assigned to bed');
 }
 
 export async function vacateRoom(req, res) {

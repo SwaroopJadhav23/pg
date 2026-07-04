@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { useStudentResource } from '../../hooks/useStudentResource';
+import { resolveImageUrl, IMAGE_FALLBACK } from '../landing/utils/resolveImageUrl';
 import { studentService } from '../../services/studentService';
 import { InfoTile, formatDate } from './studentUi';
 
@@ -45,7 +46,7 @@ export function ProfilePage() {
       <div className="grid gap-6 xl:grid-cols-[0.75fr_1.25fr]">
         <Card>
           <CardContent className="p-6 text-center">
-            <img src={profile.photoUrl || undefined} alt={student.name} className="mx-auto h-28 w-28 rounded-3xl border bg-slate-100 object-cover" />
+            <img src={profile.photoUrl ? resolveImageUrl(profile.photoUrl) : IMAGE_FALLBACK} alt={student.name} className="mx-auto h-28 w-28 rounded-3xl border bg-slate-100 object-cover" />
             <h2 className="mt-4 text-2xl font-extrabold">{student.name}</h2>
             <p className="text-sm text-muted-foreground">{student.email}</p>
             <div className="mt-6 grid gap-3 text-left">
@@ -69,7 +70,7 @@ export function ProfilePage() {
                 {['all', 'email', 'sms', 'whatsapp'].map((item) => <option key={item} value={item}>{item}</option>)}
               </select>
               {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary md:col-span-2">{message}</p> : null}
-              <Button className="md:col-span-2">Save Profile</Button>
+              <Button type="submit" className="md:col-span-2">Save Profile</Button>
             </form>
           </CardContent>
         </Card>

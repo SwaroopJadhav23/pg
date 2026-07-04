@@ -49,16 +49,16 @@ export function VisitorsPage() {
           <CardHeader><CardTitle>Visitor Entry Request</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={submitVisitor} className="space-y-4">
-              <Input placeholder="Visitor Name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} />
-              <Input placeholder="Mobile Number" value={form.mobile} onChange={(event) => setForm({ ...form, mobile: event.target.value })} />
-              <Input placeholder="Relation" value={form.relation} onChange={(event) => setForm({ ...form, relation: event.target.value })} />
+              <Input placeholder="Visitor Name" value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required minLength={2} />
+              <Input placeholder="Mobile Number" value={form.mobile} onChange={(event) => setForm({ ...form, mobile: event.target.value })} required minLength={10} />
+              <Input placeholder="Relation" value={form.relation} onChange={(event) => setForm({ ...form, relation: event.target.value })} required minLength={2} />
               <div className="grid gap-3 sm:grid-cols-2">
-                <Input type="date" value={form.visitDate} onChange={(event) => setForm({ ...form, visitDate: event.target.value })} />
-                <Input type="time" value={form.expectedTime} onChange={(event) => setForm({ ...form, expectedTime: event.target.value })} />
+                <Input type="date" value={form.visitDate} onChange={(event) => setForm({ ...form, visitDate: event.target.value })} required />
+                <Input type="time" value={form.expectedTime} onChange={(event) => setForm({ ...form, expectedTime: event.target.value })} required />
               </div>
-              <Textarea placeholder="Purpose of visit" value={form.purpose} onChange={(event) => setForm({ ...form, purpose: event.target.value })} />
+              <Textarea placeholder="Purpose of visit (optional)" value={form.purpose} onChange={(event) => setForm({ ...form, purpose: event.target.value })} />
               {message ? <p className="rounded-xl bg-primary/10 p-3 text-sm text-primary">{message}</p> : null}
-              <Button className="w-full"><UserRoundCheck className="h-4 w-4" /> Request Visitor Pass</Button>
+              <Button type="submit" className="w-full"><UserRoundCheck className="h-4 w-4" /> Request Visitor Pass</Button>
             </form>
           </CardContent>
         </Card>

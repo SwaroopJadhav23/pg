@@ -1,4 +1,5 @@
 import { Bell, CalendarDays, ClipboardList, CreditCard, FileText, Home, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { ChartCard } from '../../components/shared/ChartCard';
 import { DataTable } from '../../components/shared/DataTable';
 import { PageHeader } from '../../components/shared/PageHeader';
@@ -11,6 +12,7 @@ import { studentService } from '../../services/studentService';
 import { formatDate, statusVariant } from './studentUi';
 
 export function StudentDashboard() {
+  const navigate = useNavigate();
   const { data } = useStudentResource(studentService.dashboard, {
     ...emptyStudentDashboard,
     stats: {},
@@ -40,6 +42,7 @@ export function StudentDashboard() {
         title={`Welcome back, ${data.student?.name || 'Student'}`}
         description={`Room ${profile.roomNumber || data.room?.roomNumber}, Bed ${profile.bedNumber || data.room?.bedNumber} at ${data.property?.name || 'your PG'}. Joining date: ${formatDate(profile.joiningDate)}.`}
         actionLabel="Raise Complaint"
+        onAction={() => navigate('/student/complaints')}
       />
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <StatCard label="Current Rent Status" value={data.stats?.currentRentStatus?.replaceAll('_', ' ') || 'Pending'} icon={CreditCard} tone={statusVariant(data.stats?.currentRentStatus)} delta={data.currentRent?.month || 'Current month'} />
