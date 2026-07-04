@@ -1,5 +1,8 @@
 {
   "rewrites": [
+    { "source": "/api/:path*", "destination": "https://pg-i1wz.onrender.com/api/:path*" },
+    { "source": "/upload/:path*", "destination": "https://pg-i1wz.onrender.com/upload/:path*" },
+    { "source": "/pgimages/:path*", "destination": "https://pg-i1wz.onrender.com/pgimages/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
