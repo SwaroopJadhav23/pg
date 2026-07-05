@@ -177,7 +177,7 @@ export function TenantManagementPage() {
 
   async function removeTenant(tenant) {
     const confirmed = window.confirm(
-      `Remove ${tenant.name}?\n\nTheir bed will be vacated and they will no longer be able to log in.`
+      `Delete ${tenant.name}?\n\nTheir bed will be vacated and they will no longer be able to log in.`
     );
     if (!confirmed) return;
 
@@ -187,10 +187,10 @@ export function TenantManagementPage() {
       setData((current) => ({
         tenants: (current.tenants || []).filter((item) => item._id !== tenant._id)
       }));
-      emitToast({ title: 'Tenant removed', description: `${tenant.name} was deactivated.` });
+      emitToast({ title: 'Tenant deleted', description: `${tenant.name} was deactivated.` });
     } catch (error) {
       emitToast({
-        title: 'Remove failed',
+        title: 'Delete failed',
         description: error.response?.data?.message || 'Could not remove tenant.',
         variant: 'destructive'
       });
@@ -214,16 +214,17 @@ export function TenantManagementPage() {
     status: tenant.status,
     variant: adminStatusVariant(tenant.status),
     actions: (
-      <div className="flex flex-wrap gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={() => copyTenantLogin(tenant)}>Copy Login</Button>
+      <div className="contents">
+        <Button type="button" variant="outline" size="sm" className="h-10 w-full" onClick={() => copyTenantLogin(tenant)}>Copy Login</Button>
         <Button
           type="button"
           variant="destructive"
           size="sm"
+          className="h-10 w-full"
           disabled={removingId === tenant._id}
           onClick={() => removeTenant(tenant)}
         >
-          {removingId === tenant._id ? 'Removing...' : 'Remove'}
+          {removingId === tenant._id ? 'Deleting...' : 'Delete'}
         </Button>
       </div>
     )
@@ -295,8 +296,9 @@ export function TenantManagementPage() {
         <AdminTableSection title="Tenant List">
           <DataTable
             embedded
+            layout="cards"
             columns={[
-              { key: 'photo', label: 'Photo', hideOnMobile: true },
+              { key: 'photo', label: 'Photo' },
               { key: 'name', label: 'Tenant', mobilePrimary: true },
               { key: 'email', label: 'Email' },
               { key: 'mobile', label: 'Mobile' },

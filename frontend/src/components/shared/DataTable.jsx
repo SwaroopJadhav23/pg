@@ -4,6 +4,7 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Card } from '../ui/card';
 import { Input } from '../ui/input';
+import { cn } from '../../lib/utils';
 import { TableSkeleton } from './Skeleton';
 
 function renderCell(column, row) {
@@ -50,7 +51,7 @@ function MobileRowCard({ row, columns }) {
       ) : null}
 
       {actionCol && row[actionCol.key] ? (
-        <div className="mobile-action-stack mt-4 border-t border-dashed pt-3">
+        <div className="mt-4 grid grid-cols-1 gap-2 border-t border-dashed pt-3 sm:grid-cols-2">
           {row[actionCol.key]}
         </div>
       ) : null}
@@ -65,7 +66,8 @@ export function DataTable({
   searchable = true,
   pageSize = 8,
   filters = [],
-  embedded = false
+  embedded = false,
+  layout = 'auto'
 }) {
   const [search, setSearch] = useState('');
   const [activeFilters, setActiveFilters] = useState({});
@@ -122,7 +124,20 @@ export function DataTable({
     </div>
   );
 
-  const body = loading ? <TableSkeleton columns={columns.length} /> : (
+  const useCardLayout = layout === 'cards';
+
+  const cardList = (
+    <div className="space-y-3 p-3">
+      {visibleRows.map((row) => (
+        <MobileRowCard key={row.id} row={row} columns={columns} />
+      ))}
+      {!visibleRows.length ? (
+        <p className="py-10 text-center text-muted-foreground">No records found</p>
+      ) : null}
+    </div>
+  );
+
+  const body = loading ? <TableSkeleton columns={columns.length} /> : useCardLayout ? cardList : (
     <>
       <div className="space-y-3 p-3 lg:hidden">
         {visibleRows.map((row) => (
@@ -137,12 +152,34 @@ export function DataTable({
         <div className="max-w-full overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead className="bg-slate-50 text-xs uppercase text-muted-foreground dark:bg-slate-900/60">
-              <tr>{columns.map((column) => <th key={column.key} className="whitespace-nowrap px-4 py-4 font-bold lg:px-5">{column.label}</th>)}</tr>
+              <tr>{columns.map((column) => (
+                <th
+                  key={column.key}
+                  className={cn(
+                    'whitespace-nowrap px-4 py-4 font-bold lg:px-5',
+                    column.key === 'actions' && 'sticky right-0 z-10 min-w-[8.5rem] bg-slate-50 dark:bg-slate-900/60'
+                  )}
+                >
+                  {column.label}
+                </th>
+              ))}</tr>
             </thead>
             <tbody className="divide-y">
               {visibleRows.map((row) => (
                 <tr key={row.id} className="bg-card transition hover:bg-slate-50 dark:hover:bg-slate-900/50">
-                  {columns.map((column) => <td key={column.key} className="max-w-xs whitespace-nowrap px-4 py-4 lg:px-5">{renderCell(column, row)}</td>)}
+                  {columns.map((column) => (
+                    <td
+                      key={column.key}
+                      className={cn(
+                        'px-4 py-4 lg:px-5',
+                        column.key === 'actions'
+                          ? 'sticky right-0 z-10 min-w-[8.5rem] whitespace-normal bg-card shadow-[-6px_0_12px_-8px_rgba(15,23,42,0.25)]'
+                          : 'max-w-xs whitespace-nowrap'
+                      )}
+                    >
+                      {renderCell(column, row)}
+                    </td>
+                  ))}
                 </tr>
               ))}
               {!visibleRows.length ? (
@@ -164,7 +201,7 @@ export function DataTable({
   );
 
   if (embedded) {
-    return <div className="min-w-0 max-w-full overflow-hidden">{content}</div>;
+    return <div className="min-w-0 max-w-full">{content}</div>;
   }
 
   return (
