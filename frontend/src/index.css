@@ -65,10 +65,17 @@
     overflow-x: clip;
   }
 
+  @media (min-width: 1024px) {
+    #root {
+      overflow-x: visible;
+    }
+  }
+
   .portal-page,
   .admin-page-grid {
     min-width: 0;
     max-width: 100%;
+    overflow: visible;
   }
 
   .admin-page-grid > * {
@@ -166,11 +173,21 @@
 }
 
 .gradient-panel {
-  background: radial-gradient(circle at top left, rgba(108, 77, 255, 0.18), transparent 34%), linear-gradient(135deg, #ffffff 0%, #f8f7ff 100%);
+  overflow: visible;
+  background:
+    radial-gradient(circle at 1.75rem 1.75rem, rgba(108, 77, 255, 0.18), transparent 34%),
+    linear-gradient(135deg, #ffffff 0%, #f8f7ff 100%);
 }
 
 .dark .gradient-panel {
-  background: radial-gradient(circle at top left, rgba(139, 120, 255, 0.2), transparent 34%), linear-gradient(135deg, #111827 0%, #0f1020 100%);
+  background:
+    radial-gradient(circle at 1.75rem 1.75rem, rgba(139, 120, 255, 0.2), transparent 34%),
+    linear-gradient(135deg, #111827 0%, #0f1020 100%);
+}
+
+.portal-header-eyebrow {
+  letter-spacing: 0.12em;
+  padding-left: 0.12em;
 }
 
 .landing-page {

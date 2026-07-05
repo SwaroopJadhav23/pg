@@ -32,7 +32,7 @@ export function SuperAdminDashboard() {
   }));
 
   return (
-    <>
+    <div className="portal-page flex w-full min-w-0 max-w-full flex-col gap-4 overflow-visible sm:gap-5 md:gap-6">
       <PageHeader
         eyebrow="Super Admin Portal"
         title="Enterprise Multi-PG Control Tower"
@@ -63,6 +63,6 @@ export function SuperAdminDashboard() {
         ]}
         rows={propertyRows}
       />
-    </>
+    </div>
   );
 }
