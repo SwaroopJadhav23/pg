@@ -1,4 +1,4 @@
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { Building2 } from 'lucide-react';
 
 export function AuthLayout() {
@@ -18,16 +18,13 @@ export function AuthLayout() {
         </div>
       </section>
       <section className="safe-top safe-bottom safe-x relative flex min-h-[100dvh] items-center justify-center p-4 sm:p-6">
-        <div className="absolute left-4 right-4 top-[max(1rem,env(safe-area-inset-top))] flex items-center gap-2 lg:hidden">
+        <div className="absolute left-4 top-[max(1rem,env(safe-area-inset-top))] flex items-center gap-2 lg:hidden">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Building2 className="h-5 w-5" />
           </div>
-          <div>
-            <p className="text-sm font-bold">Om Sai PG OS</p>
-            <Link to="/" className="text-xs text-primary hover:underline">← Back to listing</Link>
-          </div>
+          <p className="text-sm font-bold">Om Sai PG OS</p>
         </div>
-        <div className="w-full max-w-md pt-14 lg:pt-0"><Outlet /></div>
+        <div className="w-full max-w-md pt-12 lg:pt-0"><Outlet /></div>
       </section>
     </div>
   );
