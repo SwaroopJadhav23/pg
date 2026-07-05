@@ -1,9 +1,10 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Building2, LogOut, Menu, Moon, Search, Sun } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { cn } from '../../lib/utils';
 import { Button } from '../ui/button';
 import { useAuth } from '../../auth/AuthContext';
+import { useStableTap } from '../../hooks/useStableTap';
 
 export function PortalShell({ roleLabel, navigation }) {
   const { user, logout } = useAuth();
@@ -28,23 +29,48 @@ export function PortalShell({ roleLabel, navigation }) {
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  function toggleTheme() {
-    const next = !dark;
-    setDark(next);
-    localStorage.setItem('pg_theme', next ? 'dark' : 'light');
-    document.documentElement.classList.toggle('dark', next);
-  }
+  const toggleTheme = useCallback(() => {
+    setDark((current) => {
+      const next = !current;
+      localStorage.setItem('pg_theme', next ? 'dark' : 'light');
+      document.documentElement.classList.toggle('dark', next);
+      return next;
+    });
+  }, []);
 
-  function handleLogout() {
+  const handleLogout = useCallback(() => {
     setOpen(false);
     logout();
     navigate('/login', { replace: true });
-  }
+    window.setTimeout(() => {
+      if (window.location.pathname !== '/login') {
+        window.location.replace('/login');
+      }
+    }, 120);
+  }, [logout, navigate]);
+
+  const onMenuTap = useStableTap(() => setOpen((value) => !value));
+  const onCloseOverlayTap = useStableTap(() => setOpen(false));
+  const onLogoutTap = useStableTap(handleLogout);
+  const onThemeTap = useStableTap(toggleTheme);
 
   return (
     <div className="min-h-screen min-h-[100dvh] bg-slate-50 dark:bg-background">
-      {open ? <button type="button" aria-label="Close sidebar" className="fixed inset-0 z-30 bg-black/30 lg:hidden" onClick={() => setOpen(false)} /> : null}
-      <aside className={cn('safe-top fixed inset-y-0 left-0 z-40 flex w-[min(17rem,85vw)] flex-col overflow-y-auto border-r bg-white/95 p-3 shadow-sm backdrop-blur transition-transform dark:bg-slate-950/95 lg:translate-x-0', open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0')}>
+      {open ? (
+        <button
+          type="button"
+          aria-label="Close sidebar"
+          className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+          onPointerUp={onCloseOverlayTap}
+        />
+      ) : null}
+
+      <aside
+        className={cn(
+          'safe-top fixed inset-y-0 left-0 z-40 flex w-[min(17rem,85vw)] flex-col overflow-y-auto border-r bg-white p-3 shadow-sm dark:bg-slate-950 lg:translate-x-0',
+          open ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        )}
+      >
         <div className="flex items-center gap-2.5 rounded-xl bg-primary/10 p-2.5 text-primary">
           <Building2 className="h-5 w-5 shrink-0" />
           <div className="min-w-0">
@@ -52,44 +78,91 @@ export function PortalShell({ roleLabel, navigation }) {
             <p className="truncate text-[11px] text-muted-foreground">{roleLabel}</p>
           </div>
         </div>
+
         <nav className="mt-4 flex-1 space-y-0.5">
           {navigation.map((item) => {
             const Icon = item.icon;
             return (
-              <NavLink key={item.path} to={item.path} end={item.path.split('/').length <= 2} onClick={() => setOpen(false)} className={({ isActive }) => cn('flex min-h-11 items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition', isActive ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' : 'text-slate-600 hover:bg-accent hover:text-primary dark:text-slate-300')}>
-                <Icon className="h-4 w-4 shrink-0" /> <span className="truncate">{item.label}</span>
+              <NavLink
+                key={item.path}
+                to={item.path}
+                end={item.path.split('/').length <= 2}
+                onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    'flex min-h-11 items-center gap-2.5 rounded-xl px-3 py-2.5 text-[13px] font-semibold transition touch-manipulation',
+                    isActive
+                      ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20'
+                      : 'text-slate-600 hover:bg-accent hover:text-primary dark:text-slate-300'
+                  )
+                }
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="truncate">{item.label}</span>
               </NavLink>
             );
           })}
         </nav>
-        <div className="mt-4 border-t pt-4 lg:hidden">
-          <Button type="button" variant="outline" className="h-11 w-full touch-manipulation" onClick={handleLogout}>
-            <LogOut className="h-4 w-4" /> Logout
-          </Button>
+
+        <div className="mt-4 border-t pt-4 md:hidden">
+          <button
+            type="button"
+            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-input bg-background text-sm font-semibold touch-manipulation active:bg-accent"
+            onPointerUp={onLogoutTap}
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
         </div>
       </aside>
 
       <div className="min-w-0 w-full max-w-full overflow-x-clip md:overflow-visible lg:pl-60">
-        <header className="safe-top sticky top-0 z-30 border-b bg-white/80 px-3 py-2 backdrop-blur dark:bg-slate-950/80 sm:px-4 md:px-6">
+        <header className="portal-mobile-header safe-top sticky top-0 z-50 border-b bg-white px-3 py-2 dark:bg-slate-950 md:bg-white/80 md:backdrop-blur md:dark:bg-slate-950/80 sm:px-4 md:px-6">
           <div className="flex items-center justify-between gap-2 sm:gap-3">
             <div className="flex min-w-0 flex-1 items-center gap-2">
-              <Button type="button" variant="ghost" size="icon" className="h-11 w-11 shrink-0 touch-manipulation lg:hidden" onClick={() => setOpen((value) => !value)} aria-label="Open menu">
+              <button
+                type="button"
+                className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-foreground touch-manipulation active:bg-accent md:hidden"
+                onPointerUp={onMenuTap}
+                aria-label="Open menu"
+              >
                 <Menu className="h-5 w-5" />
-              </Button>
+              </button>
+
               <div className="hidden min-w-0 flex-1 items-center gap-2 rounded-xl border bg-background px-3 py-1.5 text-sm text-muted-foreground md:flex">
                 <Search className="h-3.5 w-3.5 shrink-0" />
-                <input className="no-yellow-autofill min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground" name="pg-master-search" autoComplete="off" spellCheck="false" placeholder="Search tenants, rooms, rent..." />
+                <input
+                  className="no-yellow-autofill min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+                  name="pg-master-search"
+                  autoComplete="off"
+                  spellCheck="false"
+                  placeholder="Search tenants, rooms, rent..."
+                />
               </div>
             </div>
-            <div className="relative z-50 flex shrink-0 items-center gap-1 sm:gap-2">
-              <Button type="button" variant="ghost" size="icon" className="hidden h-10 w-10 md:inline-flex" onClick={toggleTheme} aria-label="Toggle theme">
+
+            <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+              <button
+                type="button"
+                className="hidden h-10 w-10 items-center justify-center rounded-lg touch-manipulation active:bg-accent md:inline-flex"
+                onPointerUp={onThemeTap}
+                aria-label="Toggle theme"
+              >
                 {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-              </Button>
+              </button>
+
               <div className="hidden min-w-0 text-right sm:block">
                 <p className="truncate text-sm font-semibold">{user?.name || 'Demo User'}</p>
                 <p className="truncate text-[11px] text-muted-foreground">{roleLabel}</p>
               </div>
-              <Button type="button" variant="outline" size="sm" className="h-11 min-w-[5.5rem] touch-manipulation px-3 md:h-10" onClick={handleLogout}>
+
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="hidden h-10 min-w-[5.5rem] touch-manipulation px-3 md:inline-flex"
+                onPointerUp={onLogoutTap}
+              >
                 <LogOut className="h-4 w-4 shrink-0" />
                 <span>Logout</span>
               </Button>
@@ -97,7 +170,9 @@ export function PortalShell({ roleLabel, navigation }) {
           </div>
         </header>
 
-        <main className="box-border w-full min-w-0 max-w-full space-y-4 overflow-x-clip px-3 py-3 text-sm sm:space-y-5 sm:px-4 sm:py-4 md:overflow-visible md:px-6 md:py-5 lg:px-8 [&>*]:min-w-0 [&>*]:max-w-full md:[&>*]:min-w-0"><Outlet /></main>
+        <main className="box-border w-full min-w-0 max-w-full space-y-4 overflow-x-clip px-3 py-3 text-sm sm:space-y-5 sm:px-4 sm:py-4 md:overflow-visible md:px-6 md:py-5 lg:px-8 [&>*]:min-w-0 [&>*]:max-w-full md:[&>*]:min-w-0">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
