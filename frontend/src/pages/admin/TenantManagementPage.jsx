@@ -51,6 +51,7 @@ export function TenantManagementPage() {
   const [photoPreview, setPhotoPreview] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [removingId, setRemovingId] = useState('');
 
   const vacantRooms = useMemo(
     () => (roomData.rooms || []).filter((room) => room.status !== 'occupied' && !room.tenant),
@@ -174,6 +175,30 @@ export function TenantManagementPage() {
     emitToast({ title: 'Login copied', description: `${tenant.email} / ${TENANT_DEFAULT_PASSWORD}` });
   }
 
+  async function removeTenant(tenant) {
+    const confirmed = window.confirm(
+      `Remove ${tenant.name}?\n\nTheir bed will be vacated and they will no longer be able to log in.`
+    );
+    if (!confirmed) return;
+
+    setRemovingId(tenant._id);
+    try {
+      await adminService.deleteTenant(tenant._id);
+      setData((current) => ({
+        tenants: (current.tenants || []).filter((item) => item._id !== tenant._id)
+      }));
+      emitToast({ title: 'Tenant removed', description: `${tenant.name} was deactivated.` });
+    } catch (error) {
+      emitToast({
+        title: 'Remove failed',
+        description: error.response?.data?.message || 'Could not remove tenant.',
+        variant: 'destructive'
+      });
+    } finally {
+      setRemovingId('');
+    }
+  }
+
   const rows = (data.tenants || []).map((tenant) => ({
     id: tenant._id,
     photo: tenant.profile?.photoUrl ? (
@@ -189,7 +214,18 @@ export function TenantManagementPage() {
     status: tenant.status,
     variant: adminStatusVariant(tenant.status),
     actions: (
-      <Button type="button" variant="outline" size="sm" onClick={() => copyTenantLogin(tenant)}>Copy Login</Button>
+      <div className="flex flex-wrap gap-2">
+        <Button type="button" variant="outline" size="sm" onClick={() => copyTenantLogin(tenant)}>Copy Login</Button>
+        <Button
+          type="button"
+          variant="destructive"
+          size="sm"
+          disabled={removingId === tenant._id}
+          onClick={() => removeTenant(tenant)}
+        >
+          {removingId === tenant._id ? 'Removing...' : 'Remove'}
+        </Button>
+      </div>
     )
   }));
 
