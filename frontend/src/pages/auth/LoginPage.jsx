@@ -40,7 +40,7 @@ export function LoginPage() {
           {error ? <p className="rounded-xl bg-rose-50 p-3 text-sm text-rose-600">{error}</p> : null}
           <Button className="h-11 w-full" disabled={loading}>{loading ? 'Signing in...' : 'Sign in'}</Button>
         </form>
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-6 hidden text-center text-sm text-muted-foreground sm:block">
           <Link to="/" className="font-semibold text-primary hover:underline">← Back to PG listing</Link>
         </p>
       </CardContent>
