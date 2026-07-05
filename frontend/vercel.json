@@ -4,5 +4,15 @@
     { "source": "/upload/:path*", "destination": "https://pg-i1wz.onrender.com/upload/:path*" },
     { "source": "/pgimages/:path*", "destination": "https://pg-i1wz.onrender.com/pgimages/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/index.html",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+    },
+    {
+      "source": "/",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+    }
   ]
 }

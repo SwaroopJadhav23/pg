@@ -67,8 +67,9 @@ export function DataTable({
   pageSize = 8,
   filters = [],
   embedded = false,
-  layout = 'auto'
+  layout
 }) {
+  const resolvedLayout = layout ?? (embedded ? 'cards' : 'auto');
   const [search, setSearch] = useState('');
   const [activeFilters, setActiveFilters] = useState({});
   const [page, setPage] = useState(1);
@@ -124,7 +125,7 @@ export function DataTable({
     </div>
   );
 
-  const useCardLayout = layout === 'cards';
+  const useCardLayout = resolvedLayout === 'cards';
 
   const cardList = (
     <div className="space-y-3 p-3">
