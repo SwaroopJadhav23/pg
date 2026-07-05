@@ -11,7 +11,7 @@ import { formatCurrency } from '../../lib/utils';
 import { superAdminService } from '../../services/superAdminService';
 import { SuperHeader, SuperStatus } from './superAdminUi';
 import { PropertyPhotosField } from './components/PropertyPhotosField';
-import { resolveImageUrl } from '../landing/utils/resolveImageUrl';
+import { GalleryImage } from '../landing/components/GalleryImage';
 
 const initialForm = {
   name: '',
@@ -358,7 +358,7 @@ export function PropertiesManagementPage() {
                 {(viewingProperty.images?.length || viewingProperty.imageUrl) ? (
                   <div className="mt-4 grid grid-cols-3 gap-2">
                     {(viewingProperty.images?.length ? viewingProperty.images : [viewingProperty.imageUrl]).map((url) => (
-                      <img key={url} src={resolveImageUrl(url)} alt={viewingProperty.name} className="h-24 w-full rounded-xl border object-cover" />
+                      <GalleryImage key={url} src={url} alt={viewingProperty.name} className="h-24 w-full rounded-xl border" aspectClass="aspect-auto h-24" />
                     ))}
                   </div>
                 ) : null}
@@ -374,10 +374,11 @@ export function PropertiesManagementPage() {
               <Card key={property._id} className="rounded-2xl shadow-sm">
                 <CardContent className="p-4">
                   {(property.images?.length || property.imageUrl) ? (
-                    <img
-                      src={resolveImageUrl(property.images?.[0] || property.imageUrl)}
+                    <GalleryImage
+                      src={property.images?.[0] || property.imageUrl}
                       alt={property.name}
-                      className="mb-3 h-28 w-full rounded-xl border object-cover"
+                      className="mb-3 rounded-xl border"
+                      aspectClass="aspect-[16/9] h-28"
                     />
                   ) : (
                     <div className="mb-3 flex h-28 items-center justify-center rounded-xl border border-dashed bg-slate-50 text-muted-foreground dark:bg-slate-900/40">
